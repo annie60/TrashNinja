@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1446050008 source:c:\users\ana\documents\escuela\graficas computacionales\proyecto final\trashninja\main.cpp
+	<windows.h>
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<stdlib.h>
+	<string>
+	<fstream>
+	<iostream>
+	<math.h>
+
+976692172 c:\users\ana\documents\escuela\graficas computacionales\glut\include\gl\glut.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
