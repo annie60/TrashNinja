@@ -18,13 +18,18 @@ using namespace std;
 
 int ancho=500;
 int largo=500;
+bool jugando=false;
+int nivel = 1;
+int puntuacionActual=0;
+//Valores de los objetos a recoger
+int valoraciones[]={5,10,15,25};
 
 static void resize(int width, int height)
 {
     const float ar = (float) width / (float) height;
     ancho=width;
     largo=height;
-    glClearColor(0.291,0.063,0,0.8);
+    glClearColor(1,1,1,0);
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -35,11 +40,15 @@ static void resize(int width, int height)
     glLoadIdentity() ;
     gluLookAt(0, 0, 15, 0, 0, 0, 0, 1,0);
 }
+static void timer(int i){
+
+}
 static void dibujaBotonMadera(int ancho){
-     glLineWidth(1);
+    glLineWidth(1);
     glColor3f(0.9,0.05,0);
     glPushMatrix();
     glRotatef(-0.5,0,0,1);
+
     glBegin(GL_QUADS);
     glVertex2f(0.002*ancho,0*ancho);
     glVertex2f(0.002*ancho,0.1*ancho);
@@ -202,13 +211,29 @@ static void dibujaCaraNinja(int red,int green,int blue){
 
 }
 static void dibujaBasurero(){
-    glColor3f(0.5,0.5,0.5);
+    //Brazos
+    //Izquierdo
+    glColor3f(1,1,1);
+    glPushMatrix();
+    glTranslatef(-5.5,2.5,0);
+    glRotatef(20,0,-1,-1.5);
+    glScalef(0.5,1,1);
+    glutSolidSphere(3.14,100,2);
+    glPopMatrix();
+    //Derecho
+    glColor3f(1,1,1);
+    glPushMatrix();
+    glTranslatef(5.5,2.5,0);
+    glRotatef(20,0,-1,1.5);
+    glScalef(0.5,1,1);
+    glutSolidSphere(3.14,100,2);
+    glPopMatrix();
     //Base
+    glColor3f(0.5,0.5,0.5);
     glPushMatrix();
     glScalef(9,8,1);
     glutSolidCube(1);
     glPopMatrix();
-
     glColor3f(0.8,0.8,0.8);
     //Arriba
     glPushMatrix();
@@ -216,7 +241,6 @@ static void dibujaBasurero(){
     glScalef(1.5,1,1);
     glutSolidSphere(3.14,100,2);
     glPopMatrix();
-
     glColor3f(0.5,0.5,0.5);
     //Abajo
     glPushMatrix();
@@ -224,7 +248,7 @@ static void dibujaBasurero(){
     glScalef(1.5,1,1);
     glutSolidSphere(3.14,100,2);
     glPopMatrix();
-    //Decorada
+    //Decorado
     glColor3f(0,0,0);
     glPushMatrix();
     glScalef(3.5,16,1);
@@ -237,17 +261,78 @@ static void dibujaBasurero(){
     glVertex2f(0.5,0);
     glEnd();
     glPopMatrix();
+
+
+}
+static void letrero(string palabra){
+
+    int yRaster=0;
+    int xRaster =0;
+
+    glColor3f(0, 0,0);
+
+    for(int j=0;j < palabra.length();j++){
+       char valor=palabra.at(j);
+       glRasterPos2i(xRaster,yRaster);
+       glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,valor);
+       xRaster+=10;
+    }
+}
+static void dibujaTapaBasurero(){
+
+}
+static void dibujaEstrellas(){
+
+}
+static void pantallaInicial(){
+    //Fondo
+    glColor3f(0.271,0.063,0);
+    glBegin(GL_QUADS);
+    glVertex2f(-(ancho/2),(largo/2));
+    glVertex2f((ancho/2),(largo/2));
+    glVertex2f((ancho/2),-(largo/2));
+    glVertex2f(-(ancho/2),-(largo/2));
+    glEnd();
+
+    //Barra blanca
+    glColor3f(0.96,0.56,0.2);
+    glBegin(GL_QUADS);
+    glVertex2f(-(ancho/2),(largo/2));
+    glVertex2f((ancho/2),(largo/2));
+    glVertex2f((ancho/2),(largo/4));
+    glVertex2f(-(ancho/2),(largo/4));
+    glEnd();
+    //Separador
+    glPushMatrix();
+    glColor3f(0,0,0);
+    glRotatef(1,0,0,1);
+    glLineWidth(1);
+    for(int i=0;i<3;i++){
+    glBegin(GL_LINES);
+    glVertex2f(-(ancho/2),((largo/4)-(1.5*i)));
+    glVertex2f((ancho/2),((largo/4)-(1.5*i)));
+    glEnd();
+    }
+    glPopMatrix();
+    //Parte de arriba
+    glPushMatrix();
+    glTranslatef((-(ancho/4))+ancho/8,(largo/4)+15,1);
+    glScalef(300,700,1);
+    dibujaBotonMadera(1);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef((-(ancho/4))+ancho/5,(largo/4)+20,1);
+    glScalef(2.5,10,1);
+    letrero("Jugar");
+    glPopMatrix();
 }
 static void display(void)
 {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPushMatrix();
-    glTranslatef((-(ancho/4))+ancho/8,largo/4,1);
-    glScalef(300,700,1);
-    dibujaBotonMadera(1);
-    glPopMatrix();
 
+    pantallaInicial();
     glPushMatrix();
     glTranslatef((-(ancho/2))+50,largo/4,1);
     glScalef(50,50,1);
@@ -279,8 +364,8 @@ static void display(void)
 
     glPushMatrix();
     glColor3f(0.5,0.5,0.5);
-    glTranslatef(ancho/4,-(largo/4),1);
-    glScalef(5,5,1);
+    glTranslatef(ancho/4,-60,1);
+    glScalef(6,5,1);
     dibujaBasurero();
     glPopMatrix();
 
