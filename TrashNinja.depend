@@ -14,3 +14,13 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
+1446275968 source:c:\users\ana\documents\github\trashninja\main.cpp
+	<windows.h>
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<stdlib.h>
+	<string>
+	<fstream>
+	<iostream>
+	<math.h>
+

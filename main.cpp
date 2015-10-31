@@ -20,6 +20,7 @@ int ancho=500;
 int largo=500;
 bool jugando=false;
 int nivel = 1;
+int angulo=-1;
 int puntuacionActual=0;
 //Valores de los objetos a recoger
 int valoraciones[]={5,10,15,25};
@@ -41,13 +42,16 @@ static void resize(int width, int height)
     gluLookAt(0, 0, 15, 0, 0, 0, 0, 1,0);
 }
 static void timer(int i){
+angulo*=-1;
+
+glutPostRedisplay();
 
 }
 static void dibujaBotonMadera(int ancho){
     glLineWidth(1);
     glColor3f(0.9,0.05,0);
+
     glPushMatrix();
-    glRotatef(-0.5,0,0,1);
 
     glBegin(GL_QUADS);
     glVertex2f(0.002*ancho,0*ancho);
@@ -56,6 +60,7 @@ static void dibujaBotonMadera(int ancho){
     glVertex2f(0.65*ancho,0*ancho);
     glEnd();
     glPopMatrix();
+
     glColor3f(0,0,0);
     glLineWidth(2);
     glBegin(GL_LINE_LOOP);
@@ -278,11 +283,47 @@ static void letrero(string palabra){
        xRaster+=10;
     }
 }
-static void dibujaTapaBasurero(){
+static void letreroChico(string palabra){
 
+    int yRaster=0;
+    int xRaster =0;
+
+    glColor3f(0, 0,0);
+
+    for(int j=0;j < palabra.length();j++){
+       char valor=palabra.at(j);
+       glRasterPos2i(xRaster,yRaster);
+       glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,valor);
+       xRaster+=10;
+    }
+}
+static void dibujaTapaBasurero(){
+    glTranslatef(30,10,0);
+    glColor3f(0,0,0);
+    glPushMatrix();
+    //glTranslatef(0,(angulo),0);
+    glScalef(18.9,12.9,1);
+    glutSolidSphere(3.14,80,2);
+    glPopMatrix();
+    glColor3f(0.5,0.5,0.5);
+    glPushMatrix();
+    glScalef(18.5,12.5,1);
+    glutSolidSphere(3.14,80,2);
+    glPopMatrix();
+    glTranslatef(-50,0,0);
 }
 static void dibujaEstrellas(){
 
+}
+static void dibujaFondoMensajes(int ancho){
+    //Fondo
+    glColor3f(0.85,0.1,0);
+    glBegin(GL_QUADS);
+    glVertex2f(0*ancho,0*ancho);
+    glVertex2f(0*ancho,1*ancho);
+    glVertex2f(1*ancho,1*ancho);
+    glVertex2f(1*ancho,0*ancho);
+    glEnd();
 }
 static void pantallaInicial(){
     //Fondo
@@ -316,15 +357,79 @@ static void pantallaInicial(){
     glPopMatrix();
     //Parte de arriba
     glPushMatrix();
+    glRotatef(0.5*angulo,0,0,1);
     glTranslatef((-(ancho/4))+ancho/8,(largo/4)+15,1);
     glScalef(300,700,1);
     dibujaBotonMadera(1);
+    glutTimerFunc(300,timer,1);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef((-(ancho/4))+ancho/5,(largo/4)+20,1);
+    glRotatef(0.5*angulo,0,0,1);
+    glTranslatef((-(ancho/4))+ancho/6,(largo/3),1);
     glScalef(2.5,10,1);
-    letrero("Jugar");
+    letrero("J-Jugar");
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(-((ancho/2)-50),(largo/4)+40,1);
+    dibujaTapaBasurero();
+    glColor3f(0,0,0);
+    glTranslatef(25,0,1);
+    letreroChico("I-Info");
+    glPopMatrix();
+
+}
+static void pantallaInformacion(){
+    //Fondo
+    glColor3f(0.96,0.56,0.2);
+    glBegin(GL_QUADS);
+    glVertex2f(-(ancho/2),(largo/2));
+    glVertex2f((ancho/2),(largo/2));
+    glVertex2f((ancho/2),-(largo/2));
+    glVertex2f(-(ancho/2),-(largo/2));
+    glEnd();
+    //Regreso
+    glPushMatrix();
+    glTranslatef((-(ancho/2))+50,largo/3,1);
+    glScalef(50,50,1);
+    dibujaBotonHome(1);
+    glPopMatrix();
+    //Instrucciones
+
+    glPushMatrix();
+    glTranslatef(-(ancho/4),50,0);
+    glPushMatrix();
+    glTranslatef(-(ancho/11),-(largo/4),0);
+    glScalef(ancho/1.5,largo/3,2);
+    glRotatef(5*angulo,0,angulo,1);
+    dibujaFondoMensajes(1);
+    glutTimerFunc(650,timer,1);
+    glPopMatrix();
+    letreroChico("Usa las flechas del teclado");
+    glTranslatef(0,-50,0);
+    letreroChico("para mover al ninja");
+    glTranslatef(0,-50,0);
+    letreroChico("y atrapar lo que no sirve.");
+    glTranslatef(0,-100,0);
+    letreroChico("Hecho por:");
+    glTranslatef(0,-20,0);
+    letreroChico("Ana Arellano");
+    glTranslatef(0,-20,0);
+    letreroChico("Luis Reyna");
+    glPopMatrix();
+    //Ninja
+    glPushMatrix();
+    glColor3f(0,0,0);
+    glTranslatef(ancho/3,0,1);
+    glScalef(2,2,0);
+    dibujaCaraNinja(0,0,1);
+    glPopMatrix();
+    glPushMatrix();
+    glColor3f(0.5,0.5,0.5);
+    glTranslatef(ancho/3,-60,1);
+    glScalef(6,5,1);
+    dibujaBasurero();
     glPopMatrix();
 }
 static void display(void)
@@ -332,14 +437,10 @@ static void display(void)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    pantallaInicial();
-    glPushMatrix();
-    glTranslatef((-(ancho/2))+50,largo/4,1);
-    glScalef(50,50,1);
-    dibujaBotonHome(1);
-    glPopMatrix();
+    //pantallaInicial();
 
-
+    pantallaInformacion();
+    /*
     glPushMatrix();
     glColor3f(0,0,0);
     glTranslatef(-(ancho/4),0,1);
@@ -367,7 +468,7 @@ static void display(void)
     glTranslatef(ancho/4,-60,1);
     glScalef(6,5,1);
     dibujaBasurero();
-    glPopMatrix();
+    glPopMatrix();*/
 
     glutSwapBuffers();
 }
