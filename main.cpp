@@ -18,6 +18,9 @@ using namespace std;
 
 int ancho=500;
 int largo=500;
+int xNinja=0;
+int yNinja=0;
+int velocidad=4; //variable para calcular que tan rapido se mueve
 bool jugando=false;
 int nivel = 1;
 int angulo=-1;
@@ -432,14 +435,50 @@ static void pantallaInformacion(){
     dibujaBasurero();
     glPopMatrix();
 }
+
+static void juego(){
+    //Fondo
+    glColor3f(0.96,0.56,0.2);
+    glBegin(GL_QUADS);
+    glVertex2f(-(ancho/2),(largo/2));
+    glVertex2f((ancho/2),(largo/2));
+    glVertex2f((ancho/2),-(largo/2));
+    glVertex2f(-(ancho/2),-(largo/2));
+    glEnd();
+    //Regreso
+    glPushMatrix();
+    glTranslatef((-(ancho/2))+50,largo/3,1);
+    glScalef(50,50,1);
+    dibujaBotonHome(1);
+    glPopMatrix();
+
+    //Ninja
+    glPushMatrix();
+    glTranslatef(xNinja,yNinja,1);
+    glPushMatrix();
+    glColor3f(0,0,0);
+    glTranslatef(ancho/3,0,1);
+    glScalef(2,2,0);
+    dibujaCaraNinja(0,0,1);
+    glPopMatrix();
+    glPushMatrix();
+    glColor3f(0.5,0.5,0.5);
+    glTranslatef(ancho/3,-60,1);
+    glScalef(6,5,1);
+    dibujaBasurero();
+    glPopMatrix();
+    glPopMatrix();
+}
 static void display(void)
 {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //pantallaInicial();
-
-    pantallaInformacion();
+    if(!jugando)
+        pantallaInformacion();
+    else
+        juego();
     /*
     glPushMatrix();
     glColor3f(0,0,0);
@@ -473,7 +512,64 @@ static void display(void)
     glutSwapBuffers();
 }
 
+static void reiniciar(){
 
+}
+
+static void key(unsigned char k, int x, int y){
+  switch (k) {
+  case 'E':  /* Escape */
+  case 'e':
+    exit(0);
+    break;
+  case 'p':
+  case 'P':
+    jugando=false;
+    break;
+  case 'j':
+  case'J':
+    jugando=true;
+    //glutTimerFunc(100,timer,1);
+    break;
+  case 'R':
+  case 'r':
+    reiniciar(); //todo:falta por implementar
+    break;
+
+  default:
+    return;
+  }
+  glutPostRedisplay();
+}
+static void mover(int key,int x,int y){
+
+ switch(key){
+ case GLUT_KEY_DOWN:
+
+    if(yNinja<-largo)
+        break;
+    yNinja+= velocidad*-1;
+     break;
+ case GLUT_KEY_UP:
+    if(yNinja>largo)
+        break;
+    yNinja+= velocidad*1;
+    break;
+ case GLUT_KEY_LEFT:
+    if(xNinja<-ancho)
+        break;
+    xNinja+= velocidad*-1;
+    break;
+ case GLUT_KEY_RIGHT:
+    if(xNinja>ancho)
+        break;
+    xNinja+= velocidad*1;
+    break;
+ default:
+    return;
+ }
+ glutPostRedisplay();
+}
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
@@ -486,8 +582,12 @@ int main(int argc, char *argv[])
     glutReshapeFunc(resize);
     glutDisplayFunc(display);
 
+    glutSpecialFunc(mover);
+    glutSpecialUpFunc(mover);
 
 
+    glutKeyboardFunc(key);
+    glutKeyboardUpFunc(key);
 
     glutMainLoop();
 
