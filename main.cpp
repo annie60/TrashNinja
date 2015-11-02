@@ -30,6 +30,11 @@ int nivel = 1;
 //Variable para animacion de letreros
 int angulo=-1;
 int puntuacionActual=0;
+//Mensaje informativos en caso de no ganar
+string mensajes []={"Las manzanas son una comida que le ayuda a tu cuerpo","El cigarro puede causarte problemas al respirar"
+"Las bebidas con alcohol lastiman a tu estomago","Tu cuerpo necesita agua para poder funcionar"};
+//Puntuacion para cada nivel
+int puntosMeta [] ={100,250,500};
 //Valores de los objetos a recoger
 int valoraciones[]={5,10,15,25};
 
@@ -409,14 +414,15 @@ static void pantallaInformacion(){
     glPopMatrix();
     //Instrucciones
     glPushMatrix();
-    glTranslatef(-(ancho/4),50,0);
+    glTranslatef(-(ancho/4),50,1);
+
     glPushMatrix();
     glTranslatef(-(ancho/11),-(largo/4),0);
     glScalef(ancho/1.5,largo/3,2);
     glRotatef(5*angulo,0,angulo,1);
     dibujaFondoMensajes(1);
-
     glPopMatrix();
+
     letreroChico("Usa las flechas del teclado");
     glTranslatef(0,-50,0);
     letreroChico("para mover al ninja");
@@ -429,6 +435,7 @@ static void pantallaInformacion(){
     glTranslatef(0,-20,0);
     letreroChico("Luis Reyna");
     glPopMatrix();
+
     //Ninja
     glPushMatrix();
     glColor3f(0,0,0);
@@ -550,9 +557,6 @@ static void display(void)
             return;
     }
 
-
-
-
     glutSwapBuffers();
 }
 
@@ -568,10 +572,12 @@ static void key(unsigned char k, int x, int y){
     break;
   case 'p'://Pausar
   case 'P':
+
     jugando=false;
     break;
   case 'j':
   case'J':
+
     navegacion=2;
     //glutTimerFunc(100,timer,1);
     break;
@@ -581,12 +587,16 @@ static void key(unsigned char k, int x, int y){
     break;
   case 'h':
   case 'H':
-      jugando=false;
-      navegacion=1;
+    jugando=false;
+    navegacion=1;
     break;
   case 'i':
   case 'I':
+    if(navegacion==1){
+    jugando=false;
     navegacion=3;
+    }
+    break;
   case 'a': //aprendiz
   case 'A':
       navegacion=4;
@@ -652,7 +662,7 @@ int main(int argc, char *argv[])
     glutInitWindowPosition(10,10);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-    glutCreateWindow("GLUT Shapes");
+    glutCreateWindow("Trash Ninja");
 
     glutReshapeFunc(resize);
     glutDisplayFunc(display);
