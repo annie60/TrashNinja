@@ -20,9 +20,14 @@ int ancho=500;
 int largo=500;
 int xNinja=0;
 int yNinja=0;
+//Saber en que punto del menu esta
+// 1 -home, 2- seleccion de nivel, 3- opciones, 4- en juego
+int navegacion=1;
 int velocidad=4; //variable para calcular que tan rapido se mueve
 bool jugando=false;
+//Niveles abiertos por el jugador
 int nivel = 1;
+//Variable para animacion de letreros
 int angulo=-1;
 int puntuacionActual=0;
 //Valores de los objetos a recoger
@@ -43,6 +48,34 @@ static void resize(int width, int height)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity() ;
     gluLookAt(0, 0, 15, 0, 0, 0, 0, 1,0);
+}
+static void letreroChico(string palabra){
+
+    int yRaster=0;
+    int xRaster =0;
+
+    glColor3f(0, 0,0);
+
+    for(int j=0;j < palabra.length();j++){
+       char valor=palabra.at(j);
+       glRasterPos2i(xRaster,yRaster);
+       glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,valor);
+       xRaster+=10;
+    }
+}
+static void letrero(string palabra){
+
+    int yRaster=0;
+    int xRaster =0;
+
+    glColor3f(0, 0,0);
+
+    for(int j=0;j < palabra.length();j++){
+       char valor=palabra.at(j);
+       glRasterPos2i(xRaster,yRaster);
+       glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,valor);
+       xRaster+=10;
+    }
 }
 static void timer(int i){
 angulo*=-1;
@@ -135,6 +168,10 @@ static void dibujaBotonHome(int ancho){
     glVertex2f(0.35*ancho,0.15*ancho);
     glVertex2f(0.35*ancho,0.5*ancho);
     glEnd();
+    glPushMatrix();
+    glTranslatef(0.42,0.3,0);
+    letreroChico("H");
+    glPopMatrix();
 }
 static void medioCirculo(){
     glBegin(GL_LINE_LOOP);
@@ -272,34 +309,6 @@ static void dibujaBasurero(){
 
 
 }
-static void letrero(string palabra){
-
-    int yRaster=0;
-    int xRaster =0;
-
-    glColor3f(0, 0,0);
-
-    for(int j=0;j < palabra.length();j++){
-       char valor=palabra.at(j);
-       glRasterPos2i(xRaster,yRaster);
-       glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,valor);
-       xRaster+=10;
-    }
-}
-static void letreroChico(string palabra){
-
-    int yRaster=0;
-    int xRaster =0;
-
-    glColor3f(0, 0,0);
-
-    for(int j=0;j < palabra.length();j++){
-       char valor=palabra.at(j);
-       glRasterPos2i(xRaster,yRaster);
-       glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,valor);
-       xRaster+=10;
-    }
-}
 static void dibujaTapaBasurero(){
     glTranslatef(30,10,0);
     glColor3f(0,0,0);
@@ -364,7 +373,7 @@ static void pantallaInicial(){
     glTranslatef((-(ancho/4))+ancho/8,(largo/4)+15,1);
     glScalef(300,700,1);
     dibujaBotonMadera(1);
-    glutTimerFunc(300,timer,1);
+    //glutTimerFunc(300,timer,1);
     glPopMatrix();
 
     glPushMatrix();
@@ -399,7 +408,6 @@ static void pantallaInformacion(){
     dibujaBotonHome(1);
     glPopMatrix();
     //Instrucciones
-
     glPushMatrix();
     glTranslatef(-(ancho/4),50,0);
     glPushMatrix();
@@ -407,7 +415,7 @@ static void pantallaInformacion(){
     glScalef(ancho/1.5,largo/3,2);
     glRotatef(5*angulo,0,angulo,1);
     dibujaFondoMensajes(1);
-    glutTimerFunc(650,timer,1);
+
     glPopMatrix();
     letreroChico("Usa las flechas del teclado");
     glTranslatef(0,-50,0);
@@ -435,8 +443,7 @@ static void pantallaInformacion(){
     dibujaBasurero();
     glPopMatrix();
 }
-
-static void juego(){
+static void pantallaSeleccion(){
     //Fondo
     glColor3f(0.96,0.56,0.2);
     glBegin(GL_QUADS);
@@ -451,6 +458,59 @@ static void juego(){
     glScalef(50,50,1);
     dibujaBotonHome(1);
     glPopMatrix();
+    //Niveles
+    //nivel 1
+    glPushMatrix();
+    glColor3f(0,0,0);
+    glTranslatef(-(ancho/4),0,1);
+    glScalef(2,2,0);
+    glRotatef(10,1,1,0);
+    dibujaCaraNinja(1,0,0);
+    glTranslatef(-25,-30,0);
+    glScalef(0.5,0.5,0);
+    letreroChico("A-Aprendiz");
+    glPopMatrix();
+    //Nivel 2
+    glPushMatrix();
+    glColor3f(0,0,0);
+    glTranslatef(0,0,1);
+    glScalef(2,2,0);
+    if(nivel > 1){
+    dibujaCaraNinja(0,1,0);
+    glTranslatef(-25,-30,0);
+    glScalef(0.5,0.5,0);
+    letreroChico("N-Novato");
+    }else{
+    dibujaCaraNinja(0,0,0);
+    }
+    glPopMatrix();
+    //Nivel 3
+    glPushMatrix();
+    glColor3f(0,0,0);
+    glTranslatef(ancho/4,0,1);
+    glScalef(2,2,0);
+    if(nivel > 2){
+    dibujaCaraNinja(0,0,1);
+    glTranslatef(-25,-30,0);
+    glScalef(0.5,0.5,0);
+    letreroChico("M-Maestro");
+    }else{
+    dibujaCaraNinja(0,0,0);
+    }
+    glPopMatrix();
+
+
+}
+static void juego(){
+    //Fondo
+    glColor3f(0.96,0.56,0.2);
+    glBegin(GL_QUADS);
+    glVertex2f(-(ancho/2),(largo/2));
+    glVertex2f((ancho/2),(largo/2));
+    glVertex2f((ancho/2),-(largo/2));
+    glVertex2f(-(ancho/2),-(largo/2));
+    glEnd();
+
 
     //Ninja
     glPushMatrix();
@@ -473,41 +533,25 @@ static void display(void)
 {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    switch(navegacion){
+        case 1:
+            pantallaInicial();
+            break;
+        case 2:
+            pantallaSeleccion();
+            break;
+        case 3:
+            pantallaInformacion();
+            break;
+        case 4://
+            juego();
+            break;
+        default:
+            return;
+    }
 
-    //pantallaInicial();
-    if(!jugando)
-        pantallaInformacion();
-    else
-        juego();
-    /*
-    glPushMatrix();
-    glColor3f(0,0,0);
-    glTranslatef(-(ancho/4),0,1);
-    glScalef(2,2,0);
-    glRotatef(10,1,1,0);
-    dibujaCaraNinja(1,0,0);
-    glPopMatrix();
 
-    glPushMatrix();
-    glColor3f(0,0,0);
-    glTranslatef(0,0,1);
-    glScalef(2,2,0);
-    dibujaCaraNinja(0,1,0);
-    glPopMatrix();
 
-    glPushMatrix();
-    glColor3f(0,0,0);
-    glTranslatef(ancho/4,0,1);
-    glScalef(2,2,0);
-    dibujaCaraNinja(0,0,1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glColor3f(0.5,0.5,0.5);
-    glTranslatef(ancho/4,-60,1);
-    glScalef(6,5,1);
-    dibujaBasurero();
-    glPopMatrix();*/
 
     glutSwapBuffers();
 }
@@ -522,14 +566,45 @@ static void key(unsigned char k, int x, int y){
   case 'e':
     exit(0);
     break;
-  case 'p':
+  case 'p'://Pausar
   case 'P':
     jugando=false;
     break;
   case 'j':
   case'J':
-    jugando=true;
+    navegacion=2;
     //glutTimerFunc(100,timer,1);
+    break;
+  case 'c'://Continuar
+  case 'C':
+    jugando=true;
+    break;
+  case 'h':
+  case 'H':
+      jugando=false;
+      navegacion=1;
+    break;
+  case 'i':
+  case 'I':
+    navegacion=3;
+  case 'a': //aprendiz
+  case 'A':
+      navegacion=4;
+      jugando=true;
+    break;
+  case 'n'://novato
+  case 'N':
+      if(nivel > 1){
+        navegacion=4;
+        jugando=true;
+      }
+    break;
+  case 'm'://maestro
+  case 'M':
+      if(nivel > 2){
+            navegacion=4;
+        jugando=true;
+      }
     break;
   case 'R':
   case 'r':
@@ -546,22 +621,22 @@ static void mover(int key,int x,int y){
  switch(key){
  case GLUT_KEY_DOWN:
 
-    if(yNinja<-largo)
+    if(yNinja<-(largo/4))
         break;
     yNinja+= velocidad*-1;
      break;
  case GLUT_KEY_UP:
-    if(yNinja>largo)
+    if(yNinja>(largo/4))
         break;
     yNinja+= velocidad*1;
     break;
  case GLUT_KEY_LEFT:
-    if(xNinja<-ancho)
+    if(xNinja<-(ancho/1.35))
         break;
     xNinja+= velocidad*-1;
     break;
  case GLUT_KEY_RIGHT:
-    if(xNinja>ancho)
+    if(xNinja>(ancho/12.5))
         break;
     xNinja+= velocidad*1;
     break;
