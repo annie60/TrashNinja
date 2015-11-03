@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string>
 #include <fstream>
+#include<sstream>
 #include <iostream>
 #include<math.h>
 using namespace std;
@@ -20,6 +21,10 @@ int ancho=500;
 int largo=500;
 int xNinja=0;
 int yNinja=0;
+//Vida inicial del jugador
+int vida=3;
+//50 segundos en el cronometro
+int tiempo=50;
 //Saber en que punto del menu esta
 // 1 -home, 2- seleccion de nivel, 3- opciones, 4- en juego
 int navegacion=1;
@@ -47,13 +52,50 @@ static void resize(int width, int height)
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-width/2, width/2, -height/2, height/2, 1, 150);
+    glOrtho(-width/2, width/2, -height/2, height/2, 1, 450);
     //glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity() ;
     gluLookAt(0, 0, 15, 0, 0, 0, 0, 1,0);
 }
+//TODO: Metodos para dibujar objetos con
+// volumne para que parezca 3era dimension
+static void manzana(){
+
+}
+static void cigarro(){
+}
+static void cerveza(){
+}
+static void papas(){
+}
+static void agua(){
+}
+static void estrellas(int total){
+    for(int x=0;x<total;x++){
+
+        //TODO:Dibujar estructura de estrella
+    }
+}
+static string formato(int i){
+    int temporalMin= 0;
+    int temporalSeg;
+
+    temporalSeg=(int)i;
+
+    string minuto=static_cast<ostringstream*>( &(ostringstream() << temporalMin) )->str()+":";
+    string segundos;
+    if(temporalSeg>=10){
+        segundos=static_cast<ostringstream*>( &(ostringstream() << temporalSeg) )->str();
+    }else{
+        segundos="0"+static_cast<ostringstream*>( &(ostringstream() << temporalSeg) )->str();
+    }
+
+    return minuto+segundos;
+
+}
+
 static void letreroChico(string palabra){
 
     int yRaster=0;
@@ -83,7 +125,7 @@ static void letrero(string palabra){
     }
 }
 static void timer(int i){
-angulo*=-1;
+tiempo-=1;
 
 glutPostRedisplay();
 
@@ -329,9 +371,6 @@ static void dibujaTapaBasurero(){
     glPopMatrix();
     glTranslatef(-50,0,0);
 }
-static void dibujaEstrellas(){
-
-}
 static void dibujaFondoMensajes(int ancho){
     //Fondo
     glColor3f(0.85,0.1,0);
@@ -472,7 +511,7 @@ static void pantallaSeleccion(){
     glTranslatef(-(ancho/4),0,1);
     glScalef(2,2,0);
     glRotatef(10,1,1,0);
-    dibujaCaraNinja(1,0,0);
+    dibujaCaraNinja(0,0,1);
     glTranslatef(-25,-30,0);
     glScalef(0.5,0.5,0);
     letreroChico("A-Aprendiz");
@@ -482,7 +521,7 @@ static void pantallaSeleccion(){
     glColor3f(0,0,0);
     glTranslatef(0,0,1);
     glScalef(2,2,0);
-    if(nivel > 1){
+    if(nivel > 1){ //Lo muestra deshabilitado si no ha abierto nivel
     dibujaCaraNinja(0,1,0);
     glTranslatef(-25,-30,0);
     glScalef(0.5,0.5,0);
@@ -497,7 +536,7 @@ static void pantallaSeleccion(){
     glTranslatef(ancho/4,0,1);
     glScalef(2,2,0);
     if(nivel > 2){
-    dibujaCaraNinja(0,0,1);
+    dibujaCaraNinja(1,0,0);
     glTranslatef(-25,-30,0);
     glScalef(0.5,0.5,0);
     letreroChico("M-Maestro");
@@ -509,6 +548,7 @@ static void pantallaSeleccion(){
 
 }
 static void juego(){
+
     //Fondo
     glColor3f(0.96,0.56,0.2);
     glBegin(GL_QUADS);
@@ -517,8 +557,36 @@ static void juego(){
     glVertex2f((ancho/2),-(largo/2));
     glVertex2f(-(ancho/2),-(largo/2));
     glEnd();
-
-
+    //Regreso
+    glPushMatrix();
+    glTranslatef((-(ancho/2))+50,largo/3,1);
+    glScalef(50,50,1);
+    dibujaBotonHome(1);
+    glPopMatrix();
+    //Piso
+    glPushMatrix();
+    glTranslatef(0,-200,0);
+    glScalef(ancho-10,(largo/4),1);
+    glColor3f(0.96,0.76,0.25);
+    glBegin(GL_QUADS);
+    glVertex2f(-1,-1);
+    glVertex2f(1,-1);
+    glVertex2f(1,1);
+    glVertex2f(-1,1);
+    glEnd();
+    glPopMatrix();
+    //Cronometro
+    glPushMatrix();
+    glTranslatef((ancho/3),(largo/2.5),0);
+    string cronometro=formato(tiempo);
+    letrero(cronometro);
+    if(jugando==true){
+        glutTimerFunc(1000,timer,1);
+    }
+    glPopMatrix();
+    //TODO: Agregar letreros con los shortcuts de Pausa, reiniciar y continuar
+    //TODO: Agregar el despliegue de las estrellas
+    //TODO: Implementar despliegue de mensajes en caso de perdida
     //Ninja
     glPushMatrix();
     glTranslatef(xNinja,yNinja,1);
@@ -535,6 +603,8 @@ static void juego(){
     dibujaBasurero();
     glPopMatrix();
     glPopMatrix();
+
+
 }
 static void display(void)
 {
@@ -561,7 +631,11 @@ static void display(void)
 }
 
 static void reiniciar(){
-
+tiempo=50;
+vida=3;
+ puntuacionActual=0;
+ jugando=false;
+ glutPostRedisplay();
 }
 
 static void key(unsigned char k, int x, int y){
@@ -572,22 +646,31 @@ static void key(unsigned char k, int x, int y){
     break;
   case 'p'://Pausar
   case 'P':
-
+    if(navegacion==4){
     jugando=false;
+    glutPostRedisplay();
+    }
     break;
   case 'j':
   case'J':
-
+    if(navegacion==1){
     navegacion=2;
+    }
     //glutTimerFunc(100,timer,1);
     break;
   case 'c'://Continuar
   case 'C':
+    if(navegacion==4){
     jugando=true;
+    glutPostRedisplay();
+    }
     break;
   case 'h':
   case 'H':
+    if(jugando==true){
     jugando=false;
+    reiniciar();
+    }
     navegacion=1;
     break;
   case 'i':
@@ -599,19 +682,21 @@ static void key(unsigned char k, int x, int y){
     break;
   case 'a': //aprendiz
   case 'A':
+      if(navegacion ==2){
       navegacion=4;
       jugando=true;
+      }
     break;
   case 'n'://novato
   case 'N':
-      if(nivel > 1){
+      if(nivel > 1 && navegacion==2){
         navegacion=4;
         jugando=true;
       }
     break;
   case 'm'://maestro
   case 'M':
-      if(nivel > 2){
+      if(nivel > 2 && navegacion==2){
             navegacion=4;
         jugando=true;
       }
@@ -627,7 +712,7 @@ static void key(unsigned char k, int x, int y){
   glutPostRedisplay();
 }
 static void mover(int key,int x,int y){
-
+if(jugando==true){
  switch(key){
  case GLUT_KEY_DOWN:
 
@@ -636,7 +721,7 @@ static void mover(int key,int x,int y){
     yNinja+= velocidad*-1;
      break;
  case GLUT_KEY_UP:
-    if(yNinja>(largo/4))
+    if(yNinja>0)
         break;
     yNinja+= velocidad*1;
     break;
@@ -653,6 +738,7 @@ static void mover(int key,int x,int y){
  default:
     return;
  }
+}
  glutPostRedisplay();
 }
 int main(int argc, char *argv[])
