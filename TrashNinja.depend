@@ -14,13 +14,98 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
-1446493403 source:c:\users\ana\documents\github\trashninja\main.cpp
+1446701612 source:c:\users\ana\documents\github\trashninja\main.cpp
 	<windows.h>
 	<GLUT/glut.h>
 	<GL/glut.h>
 	<stdlib.h>
 	<string>
 	<fstream>
+	<sstream>
+	<stdio.h>
 	<iostream>
 	<math.h>
+	"glm.h"
+
+1446664061 c:\users\ana\documents\github\trashninja\imageloader.h
+
+1446700211 c:\users\ana\documents\github\trashninja\glm.h
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1446700141 source:c:\users\ana\documents\github\trashninja\glm.c
+	"config.h"
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	"glm.h"
+	"glmint.h"
+
+1446700394 c:\users\ana\documents\github\trashninja\glmint.h
+
+1446700240 source:c:\users\ana\documents\github\trashninja\glm_util.c
+	"config.h"
+	<stdlib.h>
+	<stdarg.h>
+	<string.h>
+	<stdio.h>
+	"glm.h"
+	"glmint.h"
+
+1446700262 source:c:\users\ana\documents\github\trashninja\glmimg.c
+	"config.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<math.h>
+	<windows.h>
+	<OpenGL/gl.h>
+	<OpenGL/glext.h>
+	<GL/gl.h>
+	<GL/glext.h>
+	"glm.h"
+	"glmint.h"
+
+1446700285 source:c:\users\ana\documents\github\trashninja\glmimg_devil.c
+	"config.h"
+	"glm.h"
+	"glmint.h"
+	<IL/il.h>
+	<stdlib.h>
+
+1446700305 source:c:\users\ana\documents\github\trashninja\glmimg_jpg.c
+	"config.h"
+	"glm.h"
+	"glmint.h"
+	<stdio.h>
+	<setjmp.h>
+	<string.h>
+	<stdlib.h>
+	<jpeglib.h>
+
+1446700326 source:c:\users\ana\documents\github\trashninja\glmimg_png.c
+	"config.h"
+	"glm.h"
+	"glmint.h"
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<png.h>
+
+1446700369 source:c:\users\ana\documents\github\trashninja\glmimg_sim.c
+	"config.h"
+	"glm.h"
+	"glmint.h"
+	<simage.h>
+
+1446700347 source:c:\users\ana\documents\github\trashninja\glmimg_sdl.c
+	"config.h"
+	"glm.h"
+	"glmint.h"
+	<SDL/SDL_image.h>
 
