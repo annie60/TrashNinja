@@ -2,6 +2,8 @@
  * Ninja Trash
  * Proyecto Graficas Computacional
  * Semestre Ago-Dic 2015
+ * Ana Arellano Palacios
+ * Luis Alberto Reyna
  */
 #include <windows.h>
 #ifdef __APPLE__
@@ -24,6 +26,7 @@ int ancho=500;
 int largo=500;
 int xNinja=0;
 int yNinja=0;
+bool perdio = false;
 string fullPath = __FILE__;
 //Vida inicial del jugador
 int vida=3;
@@ -60,9 +63,7 @@ static void resize(int width, int height)
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-width/2, width/2, -height/2, height/2, -8, 150);
-    //glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
-
+    glOrtho(-width/2, width/2, -height/2, height/2, 1, 150);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity() ;
     gluLookAt(0, 0, 15, 0, 0, 0, 0, 1,0);
@@ -140,8 +141,10 @@ static void timer(int i){
             tiempo-=1;
         glutTimerFunc(1000,timer,1);
     }
-
-
+    if(navegacion!=4){
+    angulo +=10;
+    glutTimerFunc(80,timer,1);
+    }
     glutPostRedisplay();
 
 }
@@ -216,17 +219,21 @@ static void dibujaBotonMadera(int ancho){
 
 }
 static void dibujaBotonHome(int ancho){
+
     ///Fondo
-    glColor3f(0.85,0.1,0);
-    glBegin(GL_QUADS);
-    glVertex2f(0*ancho,0*ancho);
-    glVertex2f(0*ancho,1*ancho);
-    glVertex2f(1*ancho,1*ancho);
-    glVertex2f(1*ancho,0*ancho);
-    glEnd();
     glPushMatrix();
-    glTranslatef(0,0,5);
+    glTranslatef(0,0,-1);
+    glScalef(40,40,2);
+    glColor3f(0.85,0.1,0);
+    glutSolidCube(1);
+    glPopMatrix();
+
+
     ///Techo
+    glPushMatrix();
+    glScalef(45,45,3);
+    glPushMatrix();
+    glTranslatef(-0.47,-0.37,1);
     glColor3f(0,0,0);
     glBegin(GL_LINES);
     glVertex2f(0.1*(ancho),0.5*(ancho));
@@ -252,10 +259,12 @@ static void dibujaBotonHome(int ancho){
     glVertex2f(0.35*ancho,0.15*ancho);
     glVertex2f(0.35*ancho,0.5*ancho);
     glEnd();
-    glPushMatrix();
-    glTranslatef(0.42,0.3,0);
-    letreroChico("H");
+
     glPopMatrix();
+    glTranslatef(0,0,0.5);
+    letreroChico("H");
+
+
     glPopMatrix();
 }
 static void medioCirculo(){
@@ -276,68 +285,58 @@ static void dibujaCaraNinja(int red,int green,int blue){
     ///Cinta
     glPushMatrix();
     glColor3f(red,green,blue);
-    glTranslatef(0,5,3);
-    glScalef(28.5,2.5,1);
-    glutSolidCube(1);
+    glTranslatef(0,5,-5);
+    glScalef(5.1,0.7,5.5);
+    glutSolidSphere(3.1416,50,50);
     glPopMatrix();
     ///Ojo izquierdo
      glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(5.5,-2.1,4.5);
-    glScalef(0.4,0.3,1);
-    glutSolidSphere(3.1416,100,2);
+    glTranslatef(5.2,-2,5.3);
+    glScalef(0.4,0.3,2);
+    glutSolidSphere(3.1416,100,100);
     glPopMatrix();
     glPushMatrix();
     glColor3f(1,1,1);
-    glTranslatef(5.5,-2.1,5.5);
-    glScalef(2.3,1.5,2);
-    glutSolidSphere(3.1416,100,2);
+    glTranslatef(0.9,-1.8,4.7);
+    glScalef(3.3,1.5,2);
+    glutSolidSphere(3.1416,100,100);
     glPopMatrix();
 
-    ///ojo derecho
+    ///Ojo derecho
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(-5.5,-2.1,4.5);
-    glScalef(0.4,0.3,1);
-    glutSolidSphere(3.1416,100,2);
+    glTranslatef(-5.3,-2,5.3);
+    glScalef(0.4,0.3,2);
+    glutSolidSphere(3.1416,100,100);
     glPopMatrix();
-
     glPushMatrix();
     glColor3f(1,1,1);
-    glTranslatef(-5.5,-2.1,5.5);
-    glScalef(2.3,1.5,2);
-    glutSolidSphere(3.1416,100,2);
+    glTranslatef(-0.9,-1.8,4.7);
+    glScalef(3.3,1.5,2);
+    glutSolidSphere(3.1416,100,100);
     glPopMatrix();
-
     ///Base
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(0,0,0);
-    glScalef(4,5.5,1);
-    glutSolidSphere(3.1416,100,2);
+    glTranslatef(0,0,-5);
+    glScalef(4,5.5,5);
+    glutSolidSphere(3.1416,100,50);
     glPopMatrix();
     ///Frente
     glPushMatrix();
-
-    glScalef(4.5,5.1,1);
-    glTranslatef(0,1,0);
-    glutSolidSphere(3.1416,100,2);
+    glTranslatef(0,1,-5);
+    glScalef(4.5,5.1,5);
+    glutSolidSphere(3.1416,100,50);
     glPopMatrix();
     ///Boca
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(-0.2,-10.5,0);
-    glScalef(4.9,2,1);
-    glutSolidSphere(3.1416,100,2);
+    glTranslatef(-0.2,-10.5,-5);
+    glScalef(4.9,2,5.5);
+    glutSolidSphere(3.1416,100,50);
     glPopMatrix();
 
-    ///Linea plana
-    glPushMatrix();
-    glColor3f(1,1,1);
-    glTranslatef(0,-5.3,2);
-    glScalef(3.8,0.5,1);
-    glutSolidSphere(3.1416,100,2);
-    glPopMatrix();
 
 
 }
@@ -349,7 +348,7 @@ static void dibujaBasurero(){
     glTranslatef(-5.5,2.5,0);
     glRotatef(20,0,-1,-1.5);
     glScalef(0.5,1,1);
-    glutSolidSphere(3.14,100,2);
+    glutSolidSphere(3.14,100,50);
     glPopMatrix();
     ///Derecho
     glColor3f(1,1,1);
@@ -357,32 +356,35 @@ static void dibujaBasurero(){
     glTranslatef(5.5,2.5,0);
     glRotatef(20,0,-1,1.5);
     glScalef(0.5,1,1);
-    glutSolidSphere(3.14,100,2);
+    glutSolidSphere(3.14,100,50);
     glPopMatrix();
     ///Base
     glColor3f(0.5,0.5,0.5);
     glPushMatrix();
-    glScalef(9,8,1);
+    glTranslatef(0,0,-2);
+    glScalef(9,8,3);
     glutSolidCube(1);
     glPopMatrix();
     glColor3f(0.8,0.8,0.8);
     ///Arriba
     glPushMatrix();
-    glTranslatef(0,4.5,0);
-    glScalef(1.5,1,1);
-    glutSolidSphere(3.14,100,2);
+    glTranslatef(0,4.5,-1);
+    glScalef(1.5,1,3);
+    glutWireSphere(3.14,10,10);
+     glColor3f(0,0,0);
+    glutWireSphere(3.14,5,10);
     glPopMatrix();
     glColor3f(0.5,0.5,0.5);
     ///Abajo
     glPushMatrix();
     glTranslatef(0,-5,0);
-    glScalef(1.5,1,1);
-    glutSolidSphere(3.14,100,2);
+    glScalef(1.5,1,3);
+    glutSolidSphere(3.14,100,50);
     glPopMatrix();
     ///Decorado
     glColor3f(0,0,0);
     glPushMatrix();
-    glTranslatef(0,0,2);
+    glTranslatef(0,0,10);
     glScalef(3.5,16,1);
     glBegin(GL_LINES);
     glVertex2f(-0.5,-0.5);
@@ -401,13 +403,13 @@ static void dibujaTapaBasurero(){
     glColor3f(0,0,0);
     glPushMatrix();
     glTranslatef(0,0,-1);
-    glScalef(18.9,12.9,1);
-    glutSolidSphere(3.14,80,2);
+    glScalef(18.9,12.9,5);
+    glutSolidSphere(3.14,80,50);
     glPopMatrix();
     glColor3f(0.5,0.5,0.5);
     glPushMatrix();
-    glScalef(18.5,12.5,1);
-    glutSolidSphere(3.14,80,2);
+    glScalef(18.5,12.5,5);
+    glutSolidSphere(3.14,80,50);
     glPopMatrix();
     glTranslatef(-50,0,0);
 }
@@ -423,6 +425,8 @@ static void dibujaFondoMensajes(int ancho){
 }
 static void pantallaInicial(){
     ///Fondo
+    glPushMatrix();
+    glTranslatef(0,0,-100);
     glColor3f(0.271,0.063,0);
     glBegin(GL_QUADS);
     glVertex2f(-(ancho/2),(largo/2));
@@ -430,10 +434,10 @@ static void pantallaInicial(){
     glVertex2f((ancho/2),-(largo/2));
     glVertex2f(-(ancho/2),-(largo/2));
     glEnd();
-
-    ///Barra blanca
+    glPopMatrix();
+    ///Barra naranja
     glPushMatrix();
-    glTranslatef(0,0,1);
+    glTranslatef(0,0,-90);
     glColor3f(0.96,0.56,0.2);
     glBegin(GL_QUADS);
     glVertex2f(-(ancho/2),(largo/2));
@@ -458,33 +462,36 @@ static void pantallaInicial(){
     glPopMatrix();
     ///Parte de arriba
     glPushMatrix();
-    glRotatef(0.5*angulo,0,0,1);
+    glRotatef(0.5,0,0,1);
     glTranslatef((-(ancho/4))+ancho/8,(largo/4)+15,2);
     glScalef(300,700,1);
     dibujaBotonMadera(1);
     glPopMatrix();
-
     glPushMatrix();
-    glRotatef(0.5*angulo,0,0,1);
+    glRotatef(0.5,0,0,1);
     glTranslatef((-(ancho/4))+ancho/6,(largo/3),2.5);
     glScalef(2.5,10,1);
     letrero("J-Jugar");
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(-((ancho/2)-50),(largo/4)+40,2);
+
+    glTranslatef(-((ancho/2)-50),(largo/4)+40,-45);
+    glRotatef(angulo,0,1,0);
+    glScalef(0.8,1,1);
+    glTranslatef(-35,0,0);
     dibujaTapaBasurero();
-    glColor3f(0,0,0);
-    glTranslatef(25,0,3);
+    glTranslatef(0,0,20);
     letreroChico("I-Info");
     glPopMatrix();
+
 
 
 }
 static void pantallaInformacion(){
     ///Fondo
     glPushMatrix();
-    glTranslatef(0,0,-20);
+    glTranslatef(0,0,-95);
     glColor3f(0.96,0.56,0.2);
     glBegin(GL_QUADS);
     glVertex2f(-(ancho/2),(largo/2));
@@ -495,17 +502,19 @@ static void pantallaInformacion(){
     glPopMatrix();
     ///Regreso
     glPushMatrix();
-    glTranslatef((-(ancho/2))+50,largo/3,1);
-    glScalef(50,50,1);
+    glTranslatef(-((ancho/2)-50),(largo/3),-45);
+    glRotatef(angulo,0,1,0);
+    glScalef(1,1,2);
+    glTranslatef(-5,0,0);
     dibujaBotonHome(1);
     glPopMatrix();
     ///Instrucciones
     glPushMatrix();
     glTranslatef(-(ancho/4),50,1);
     glPushMatrix();
-    glTranslatef(-(ancho/11),-(largo/4),-15);
+    glTranslatef(-(ancho/11),-(largo/4),-45);
     glScalef(ancho/1.5,largo/3,2);
-    glRotatef(5*angulo,0,angulo,1);
+    glRotatef(5,0,angulo,1);
     dibujaFondoMensajes(1);
     glPopMatrix();
 
@@ -526,21 +535,23 @@ static void pantallaInformacion(){
 
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(ancho/3,0,1);
-    glScalef(2,2,0);
+    glTranslatef(ancho/3,0,-10);
+    glScalef(2,2,1);
     dibujaCaraNinja(0,0,1);
     glPopMatrix();
 
     glPushMatrix();
     glColor3f(0.5,0.5,0.5);
-    glTranslatef(ancho/3,-60,1);
-    glScalef(6,5,1);
+    glTranslatef(ancho/3,-60,-11);
+    glScalef(6,5,2);
     dibujaBasurero();
     glPopMatrix();
 
 }
 static void pantallaSeleccion(){
     ///Fondo
+    glPushMatrix();
+    glTranslatef(0,0,-90);
     glColor3f(0.96,0.56,0.2);
     glBegin(GL_QUADS);
     glVertex2f(-(ancho/2),(largo/2));
@@ -548,34 +559,43 @@ static void pantallaSeleccion(){
     glVertex2f((ancho/2),-(largo/2));
     glVertex2f(-(ancho/2),-(largo/2));
     glEnd();
+    glPopMatrix();
     ///Regreso
     glPushMatrix();
     glTranslatef((-(ancho/2))+50,largo/3,1);
-    glScalef(50,50,1);
+    glScalef(1,1,2);
     dibujaBotonHome(1);
     glPopMatrix();
+
     ///Niveles
     ///nivel 1
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(-(ancho/4),0,1);
-    glScalef(2,2,0);
-    //glRotatef(10,1,1,0);
+    glTranslatef(-(ancho/4),0,-45);
+    glRotatef(angulo,0,1,0);
+    glScalef(2,2,2);
     dibujaCaraNinja(0,0,1);
-    glTranslatef(-25,-30,0);
-    glScalef(0.5,0.5,0);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(-((ancho/3.5)-15),-50,-40);
+    glRotatef(angulo,0,1,0);
+    glScalef(0.5,0.5,1);
+    glTranslatef(-55,0,0);
     letreroChico("A-Aprendiz");
     glPopMatrix();
     ///Nivel 2
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(0,0,1);
-    glScalef(2,2,0);
+    glTranslatef(0,0,-45);
+    glScalef(2,2,1);
     if(nivel > 1){ //Lo muestra deshabilitado si no ha abierto nivel
     dibujaCaraNinja(0,1,0);
+    glPushMatrix();
     glTranslatef(-25,-30,0);
     glScalef(0.5,0.5,0);
+    glRotatef(angulo,0,1,0);
     letreroChico("N-Novato");
+    glPopMatrix();
     }else{
     dibujaCaraNinja(0,0,0);
     }
@@ -584,13 +604,16 @@ static void pantallaSeleccion(){
     ///Nivel 3
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(ancho/4,0,1);
-    glScalef(2,2,0);
+    glTranslatef(ancho/4,0,-45);
+    glScalef(2,2,1);
     if(nivel > 2){
     dibujaCaraNinja(1,0,0);
+    glPushMatrix();
     glTranslatef(-25,-30,0);
     glScalef(0.5,0.5,0);
+    glRotatef(angulo,0,1,0);
     letreroChico("M-Maestro");
+    glPopMatrix();
     }else{
     dibujaCaraNinja(0,0,0);
     }
@@ -613,7 +636,7 @@ static void juego(){
     ///Regreso
     glPushMatrix();
     glTranslatef((-(ancho/2))+50,largo/3,1);
-    glScalef(50,50,1);
+    glScalef(1,1,2);
     dibujaBotonHome(1);
     glPopMatrix();
     ///Piso
@@ -641,23 +664,22 @@ static void juego(){
     //TODO: Implementar despliegue de mensajes en caso de perdida
     ///Ninja
     glPushMatrix();
-    //glRotatef(5,1,1,0);
-    glTranslatef(xNinja,yNinja,1);
-
+    glTranslatef(xNinja,yNinja,0);
+    glRotatef(5,1,1,0);
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(ancho/3,0,1);
-    glScalef(2,2,0);
+    glTranslatef(ancho/3,0,-10);
+    glScalef(2,2,1);
     dibujaCaraNinja(0,0,1);
     glPopMatrix();
     glPushMatrix();
     glColor3f(0.5,0.5,0.5);
-    glTranslatef(ancho/3,-60,1);
-    glScalef(6,5,1);
+    glTranslatef(ancho/3,-65,1);
+    glScalef(6,5.5,2);
     dibujaBasurero();
     glPopMatrix();
     glPopMatrix();
-    manzana();
+    //manzana();
 
 }
 static void display(void)
@@ -693,12 +715,12 @@ vida=3;
  glutPostRedisplay();
 }
 void init(){
-    getParentPath();
+    /*getParentPath();
     glEnable(GL_NORMALIZE);
-    string ruta = fullPath + "imagenes/" + "apple.obj";
+    string ruta = fullPath+ "imagenes/apple.obj";
     model[0]= *glmReadOBJ(ruta.c_str());
     glmUnitize(&model[0]);
-    glmVertexNormals(&model[0],90.0,GL_TRUE);
+    glmVertexNormals(&model[0],90.0,GL_TRUE);*/
     glEnable(GL_DEPTH_TEST);
 
 }
@@ -824,7 +846,7 @@ int main(int argc, char *argv[])
     glutSpecialFunc(mover);
     glutSpecialUpFunc(mover);
 
-
+    glutTimerFunc(100,timer,1);
     glutKeyboardFunc(key);
     glutKeyboardUpFunc(key);
 
