@@ -21,11 +21,12 @@
 #include "glm.h"
 
 using namespace std;
-GLMmodel model[2];
+GLMmodel model[6];
+GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };//Puntual
 int ancho=500;
 int largo=500;
 int xNinja=0;
-int yNinja=0;
+int yNinja=5;
 bool perdio = false;
 string fullPath = __FILE__;
 //Vida inicial del jugador
@@ -71,23 +72,34 @@ static void resize(int width, int height)
 //TODO: Metodos para dibujar objetos con
 // volumen para que parezca 3era dimension
 static void manzana(){
-glPushMatrix();
+    glPushMatrix();
     glTranslatef(0,0,5);
-    glmDraw(&model[0],GLM_COLOR|GLM_FLAT);
+    glmDraw(&model[5],GLM_COLOR|GLM_FLAT);
     glPopMatrix();
 }
 static void cigarro(){
+    glmDraw(&model[3],GLM_COLOR|GLM_FLAT);
 }
 static void cerveza(){
+
+    glmDraw(&model[1],GLM_COLOR|GLM_FLAT);
+
 }
-static void papas(){
+static void dona(){
+    glmDraw(&model[2],GLM_COLOR|GLM_FLAT);
 }
 static void agua(){
+    glmDraw(&model[4],GLM_COLOR|GLM_FLAT);
 }
 static void estrellas(int total){
+    int xRaster=0;
     for(int x=0;x<total;x++){
 
-        //TODO:Dibujar estructura de estrella
+        glPushMatrix();
+        glTranslatef(xRaster,0,0);
+        glmDraw(&model[0],GLM_COLOR|GLM_FLAT);
+        glPopMatrix();
+        xRaster+=2;
     }
 }
 static string formato(int i){
@@ -127,7 +139,7 @@ static void letrero(string palabra){
     int yRaster=0;
     int xRaster =0;
 
-    glColor3f(0, 0,0);
+    //glColor3f(0, 0,0);
 
     for(int j=0;j < palabra.length();j++){
        char valor=palabra.at(j);
@@ -137,16 +149,23 @@ static void letrero(string palabra){
     }
 }
 static void timer(int i){
-    if(jugando==true){
-            tiempo-=1;
-        glutTimerFunc(1000,timer,1);
-    }
+
     if(navegacion!=4){
     angulo +=10;
     glutTimerFunc(80,timer,1);
     }
     glutPostRedisplay();
 
+}
+static void timerCronometro(int i){
+    if(jugando==true && tiempo > 0){
+            tiempo-=1;
+        glutTimerFunc(1000,timerCronometro,1);
+    }else{
+        jugando=false;
+
+    }
+    glutPostRedisplay();
 }
 static void dibujaBotonMadera(int ancho){
     /*glLineWidth(1);
@@ -424,6 +443,7 @@ static void dibujaFondoMensajes(int ancho){
     glEnd();
 }
 static void pantallaInicial(){
+
     ///Fondo
     glPushMatrix();
     glTranslatef(0,0,-100);
@@ -471,11 +491,11 @@ static void pantallaInicial(){
     glRotatef(0.5,0,0,1);
     glTranslatef((-(ancho/4))+ancho/6,(largo/3),2.5);
     glScalef(2.5,10,1);
+    glColor3f(0, 0,0);
     letrero("J-Jugar");
     glPopMatrix();
 
     glPushMatrix();
-
     glTranslatef(-((ancho/2)-50),(largo/4)+40,-45);
     glRotatef(angulo,0,1,0);
     glScalef(0.8,1,1);
@@ -484,8 +504,45 @@ static void pantallaInicial(){
     glTranslatef(0,0,20);
     letreroChico("I-Info");
     glPopMatrix();
-
-
+    ///Parte de abajo
+    ///Ninja
+    glPushMatrix();
+    glTranslatef(0,0,-45);
+    glRotatef(15,0,1,0);
+    glScalef(3,3,2);
+    dibujaCaraNinja(1,1,0);
+    glPopMatrix();
+    ///Manzana
+    glPushMatrix();
+    glTranslatef(-(ancho/4),0,-45);
+    glRotatef(-70,1,1,0);
+    glScalef(20,20,10);
+    manzana();
+    glPopMatrix();
+    ///Cerveza
+    glPushMatrix();
+    glTranslatef((ancho/4),0,-45);
+    glRotatef(-80,1,1,0);
+    glScalef(40,55,20);
+    cerveza();
+    glPopMatrix();
+    ///Dona
+    glPushMatrix();
+    glTranslatef((ancho/4),100,-45);
+    glRotatef(95,1,1,0);
+    glScalef(20,20,15);
+    dona();
+    glPopMatrix();
+    ///Titulo
+     glPushMatrix();
+     glColor3f(1,1,1);
+    glTranslatef(-(ancho/2.9),-(largo/4),-40);
+    glRotatef(-30,1,1,0);
+    glScalef(2.5,1,2);
+    letrero("TRASH");
+    glTranslatef(45,0,-50);
+    letrero("NINJA");
+    glPopMatrix();
 
 }
 static void pantallaInformacion(){
@@ -562,7 +619,7 @@ static void pantallaSeleccion(){
     glPopMatrix();
     ///Regreso
     glPushMatrix();
-    glTranslatef((-(ancho/2))+50,largo/3,1);
+    glTranslatef((-(ancho/2))+50,largo/2.5,1);
     glScalef(1,1,2);
     dibujaBotonHome(1);
     glPopMatrix();
@@ -587,37 +644,48 @@ static void pantallaSeleccion(){
     glPushMatrix();
     glColor3f(0,0,0);
     glTranslatef(0,0,-45);
-    glScalef(2,2,1);
+
     if(nivel > 1){ //Lo muestra deshabilitado si no ha abierto nivel
-    dibujaCaraNinja(0,1,0);
-    glPushMatrix();
-    glTranslatef(-25,-30,0);
-    glScalef(0.5,0.5,0);
+    glScalef(2,2,1);
     glRotatef(angulo,0,1,0);
+    dibujaCaraNinja(0,1,0);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(-15,-50,-40);
+    glRotatef(angulo,0,1,0);
+    glScalef(0.5,0.5,0);
+    glTranslatef(-15,0,0);
     letreroChico("N-Novato");
     glPopMatrix();
     }else{
+    glScalef(2,2,1);
     dibujaCaraNinja(0,0,0);
-    }
     glPopMatrix();
+    }
+
 
     ///Nivel 3
     glPushMatrix();
     glColor3f(0,0,0);
     glTranslatef(ancho/4,0,-45);
-    glScalef(2,2,1);
     if(nivel > 2){
-    dibujaCaraNinja(1,0,0);
-    glPushMatrix();
-    glTranslatef(-25,-30,0);
-    glScalef(0.5,0.5,0);
+    glScalef(2,2,1);
     glRotatef(angulo,0,1,0);
+    dibujaCaraNinja(1,0,0);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef((ancho/4),-50,-40);
+    glRotatef(angulo,0,1,0);
+    glScalef(0.5,0.5,0);
+    glTranslatef(-55,0,0);
     letreroChico("M-Maestro");
     glPopMatrix();
     }else{
+    glScalef(2,2,1);
     dibujaCaraNinja(0,0,0);
-    }
     glPopMatrix();
+    }
+
 
 
 }
@@ -635,13 +703,13 @@ static void juego(){
     glPopMatrix();
     ///Regreso
     glPushMatrix();
-    glTranslatef((-(ancho/2))+50,largo/3,1);
+    glTranslatef((ancho/3)+40,largo/2.4,0);
     glScalef(1,1,2);
     dibujaBotonHome(1);
     glPopMatrix();
     ///Piso
     glPushMatrix();
-    glTranslatef(0,-200,-95);
+    glTranslatef(0,-300,-95);
     glScalef(ancho-10,(largo/4),1);
     glColor3f(0.96,0.76,0.25);
     glBegin(GL_QUADS);
@@ -654,48 +722,77 @@ static void juego(){
 
     ///Cronometro
     glPushMatrix();
-    glTranslatef((ancho/3),(largo/2.5),0);
+    glTranslatef((ancho/3)-30,(largo/2.4),1);
     string cronometro=formato(tiempo);
     letrero(cronometro);
-
     glPopMatrix();
     //TODO: Agregar letreros con los shortcuts de Pausa, reiniciar y continuar
     //TODO: Agregar el despliegue de las estrellas
     //TODO: Implementar despliegue de mensajes en caso de perdida
+    ///Puntaje
+
+    ///Vidas
+    glPushMatrix();
+    glTranslatef(-((ancho/2)-15),(largo/2.3),0);
+    glScalef(15,15,2);
+    estrellas(vida);
+    glPopMatrix();
     ///Ninja
     glPushMatrix();
-    glTranslatef(xNinja,yNinja,0);
+    glTranslatef(xNinja,0,0);
     glRotatef(5,1,1,0);
+
     glPushMatrix();
     glColor3f(0,0,0);
-    glTranslatef(ancho/3,0,-10);
+    glTranslatef(ancho/3,-100,-10);
     glScalef(2,2,1);
     dibujaCaraNinja(0,0,1);
     glPopMatrix();
+
     glPushMatrix();
     glColor3f(0.5,0.5,0.5);
-    glTranslatef(ancho/3,-65,1);
+    glTranslatef(ancho/3,-165,1);
     glScalef(6,5.5,2);
     dibujaBasurero();
     glPopMatrix();
-    glPopMatrix();
-    //manzana();
 
+    glPopMatrix();
+
+    ///Objetos
+    glPushMatrix();
+
+    glRotatef(90,1,1,0);
+    glTranslatef(0,0,-50);
+    glScalef(20,70,15);
+    //manzana();
+    cerveza();
+    glPopMatrix();
+
+}
+static void reiniciar(){
+tiempo=50;
+vida=3;
+ puntuacionActual=0;
+ jugando=false;
+ glutPostRedisplay();
 }
 static void display(void)
 {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     switch(navegacion){
         case 1:
             pantallaInicial();
+
             break;
         case 2:
             pantallaSeleccion();
+
             break;
         case 3:
             pantallaInformacion();
+
             break;
         case 4://
             juego();
@@ -707,20 +804,45 @@ static void display(void)
     glutSwapBuffers();
 }
 
-static void reiniciar(){
-tiempo=50;
-vida=3;
- puntuacionActual=0;
- jugando=false;
- glutPostRedisplay();
-}
+
 void init(){
-    /*getParentPath();
+    getParentPath();
     glEnable(GL_NORMALIZE);
-    string ruta = fullPath+ "imagenes/apple.obj";
+    string ruta = fullPath+ "imagenes/Estrella.obj";
     model[0]= *glmReadOBJ(ruta.c_str());
     glmUnitize(&model[0]);
-    glmVertexNormals(&model[0],90.0,GL_TRUE);*/
+    glmVertexNormals(&model[0],90.0,GL_TRUE);
+    ruta = fullPath+ "imagenes/beer.obj";
+    model[1]= *glmReadOBJ(ruta.c_str());
+    glmUnitize(&model[1]);
+    glmVertexNormals(&model[1],90.0,GL_TRUE);
+    ruta = fullPath+ "imagenes/Donut.obj";
+    model[2]= *glmReadOBJ(ruta.c_str());
+    glmUnitize(&model[2]);
+    glmVertexNormals(&model[2],90.0,GL_TRUE);
+    ruta = fullPath+ "imagenes/cigarette.obj";
+    model[3]= *glmReadOBJ(ruta.c_str());
+    glmUnitize(&model[3]);
+    glmVertexNormals(&model[3],90.0,GL_TRUE);
+    ruta = fullPath+ "imagenes/water.obj";
+    model[4]= *glmReadOBJ(ruta.c_str());
+    glmUnitize(&model[4]);
+    glmVertexNormals(&model[4],90.0,GL_TRUE);
+    ruta = fullPath+ "imagenes/apple.obj";
+    model[5]= *glmReadOBJ(ruta.c_str());
+    glmUnitize(&model[5]);
+    glmVertexNormals(&model[5],90.0,GL_TRUE);
+    ///Luces
+    GLfloat light_ambient[] = { 0.8, 0.8, 0.8, 1.0 };
+    GLfloat light_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    glShadeModel (GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
 
 }
@@ -756,6 +878,7 @@ static void key(unsigned char k, int x, int y){
   case 'H':
     if(jugando==true){
     jugando=false;
+    glutTimerFunc(100,timer,1);
     reiniciar();
     }
     navegacion=1;
@@ -772,7 +895,7 @@ static void key(unsigned char k, int x, int y){
       if(navegacion ==2){
       navegacion=4;
       jugando=true;
-      glutTimerFunc(1000,timer,1);
+      glutTimerFunc(1000,timerCronometro,1);
       }
     break;
   case 'n'://novato
@@ -780,7 +903,7 @@ static void key(unsigned char k, int x, int y){
       if(nivel > 1 && navegacion==2){
         navegacion=4;
         jugando=true;
-        glutTimerFunc(1000,timer,1);
+        glutTimerFunc(1000,timerCronometro,1);
       }
     break;
   case 'm'://maestro
@@ -788,7 +911,7 @@ static void key(unsigned char k, int x, int y){
       if(nivel > 2 && navegacion==2){
             navegacion=4;
         jugando=true;
-        glutTimerFunc(1000,timer,1);
+        glutTimerFunc(1000,timerCronometro,1);
       }
     break;
   case 'R':
@@ -804,7 +927,7 @@ static void key(unsigned char k, int x, int y){
 static void mover(int key,int x,int y){
 if(jugando==true){
  switch(key){
- case GLUT_KEY_DOWN:
+ /*case GLUT_KEY_DOWN:
 
     if(yNinja<-(largo/4))
         break;
@@ -814,16 +937,18 @@ if(jugando==true){
     if(yNinja>0)
         break;
     yNinja+= velocidad*1;
-    break;
+    break;*/
  case GLUT_KEY_LEFT:
-    if(xNinja<-(ancho/1.35))
+    if(xNinja<-(ancho/1.35)|| jugando==false)
         break;
     xNinja+= velocidad*-1;
+    //yNinja*=(-1);
     break;
  case GLUT_KEY_RIGHT:
-    if(xNinja>(ancho/12.5))
+    if(xNinja>(ancho/12.5) || jugando==false)
         break;
     xNinja+= velocidad*1;
+    //yNinja*=(-1);
     break;
  default:
     return;
