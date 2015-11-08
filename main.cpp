@@ -37,15 +37,19 @@ int tiempo=50;
 // 1 -home, 2- seleccion de nivel, 3- opciones, 4- en juego
 int navegacion=1;
 int velocidad=4; //variable para calcular que tan rapido se mueve
+//Indica si esta en juego o no (Pausa y continuar)
 bool jugando=false;
 //Niveles abiertos por el jugador
 int nivel = 1;
 //Variable para animacion de letreros
 int angulo=-1;
+//Contador de puntos actuales
 int puntuacionActual=0;
+//Mensaje por perdida
+string porquePerdio= "";
 //Mensaje informativos en caso de no ganar
-string mensajes []={"Las manzanas son una comida que le ayuda a tu cuerpo","El cigarro puede causarte problemas al respirar"
-"Las bebidas con alcohol lastiman a tu estomago","Tu cuerpo necesita agua para poder funcionar"};
+string mensajes []={"Las manzanas le ayudan a tu cuerpo","El cigarro puede causar problemas al respirar"
+"El alcohol lastima a tu estomago","Tu cuerpo necesita agua funcionar"};
 //Puntuacion para cada nivel
 int puntosMeta [] ={100,250,500};
 //Valores de los objetos a recoger
@@ -158,12 +162,19 @@ static void timer(int i){
 
 }
 static void timerCronometro(int i){
-    if(jugando==true && tiempo > 0){
-            tiempo-=1;
+    if(jugando==true && tiempo > 0 && vida > 0){
+        tiempo-=1;
         glutTimerFunc(1000,timerCronometro,1);
     }else{
         jugando=false;
-
+        //Revisa si se alcanzo la meta del nivel
+        if(puntuacionActual < puntosMeta[nivel]){
+        porquePerdio="No dominaste el nivel";
+        perdio=true;
+        }else if(vida==0){
+        porquePerdio="Se acabaron las vidas";
+        perdio=true;
+        }
     }
     glutPostRedisplay();
 }
@@ -433,7 +444,7 @@ static void dibujaTapaBasurero(){
     glTranslatef(-50,0,0);
 }
 static void dibujaFondoMensajes(int ancho){
-    //Fondo
+    ///Fondo
     glColor3f(0.85,0.1,0);
     glBegin(GL_QUADS);
     glVertex2f(0*ancho,0*ancho);
@@ -532,6 +543,13 @@ static void pantallaInicial(){
     glRotatef(95,1,1,0);
     glScalef(20,20,15);
     dona();
+    glPopMatrix();
+    ///Agua
+    glPushMatrix();
+    glTranslatef(-(ancho/4),-50,-45);
+    glRotatef(95,1,1,0);
+    glScalef(30,30,20);
+    agua();
     glPopMatrix();
     ///Titulo
      glPushMatrix();
@@ -690,7 +708,7 @@ static void pantallaSeleccion(){
 
 }
 static void juego(){
-    ///Fondo
+     ///Fondo
     glPushMatrix();
     glTranslatef(0,0,-100);
     glColor3f(0.96,0.56,0.2);
@@ -758,6 +776,8 @@ static void juego(){
 
     glPopMatrix();
 
+    if(perdio==false){
+
     ///Objetos
     glPushMatrix();
 
@@ -767,6 +787,37 @@ static void juego(){
     //manzana();
     cerveza();
     glPopMatrix();
+    }else{
+    ///Mensaje
+
+    glPushMatrix();
+    glTranslatef(-(ancho/4),50,1);
+
+    glPushMatrix();
+    glTranslatef(-(ancho/11),-(largo/4),-45);
+    glScalef(ancho/1.3,largo/3,2);
+    glRotatef(5,0,1,1);
+    dibujaFondoMensajes(1);
+    glPopMatrix();
+    glTranslatef(-20,0,0);
+    glColor3f(1,1,1);
+    letrero(porquePerdio);
+
+    glTranslatef(0,-50,0);
+    letrero("¡Lo siento! Vuelve a intentar");
+    glTranslatef(-25,-50,0);
+    letreroChico(mensajes[nivel-1]);
+    glTranslatef(45,-50,0);
+    glPushMatrix();
+
+    glTranslatef(-10,0,-15);
+    glScalef(230,235,2);
+    dibujaBotonMadera(1);
+    glPopMatrix();
+    glColor3f(1,1,1);
+    letrero("R-Reiniciar");
+    glPopMatrix();
+    }
 
 }
 static void reiniciar(){
@@ -916,7 +967,9 @@ static void key(unsigned char k, int x, int y){
     break;
   case 'R':
   case 'r':
-    reiniciar(); //todo:falta por implementar
+    if(navegacion == 4 && perdio==true){
+    reiniciar();
+    }
     break;
 
   default:

@@ -46,7 +46,44 @@
 			<Add library="gdi32" />
 			<Add directory="C:/Users/ana/Documents/Escuela/Graficas computacionales/GLUT/lib" />
 		</Linker>
-		<Unit filename="imageloader.h" />
+		<Unit filename="glm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glm.h" />
+		<Unit filename="glm_util.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_devil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_jpg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_png.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_sim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmint.h" />
+		<Unit filename="imagenes/Donut.mtl" />
+		<Unit filename="imagenes/Donut.obj" />
+		<Unit filename="imagenes/Estrella.mtl" />
+		<Unit filename="imagenes/Estrella.obj" />
+		<Unit filename="imagenes/apple.mtl" />
+		<Unit filename="imagenes/apple.obj" />
+		<Unit filename="imagenes/beer.mtl" />
+		<Unit filename="imagenes/beer.obj" />
+		<Unit filename="imagenes/cigarette.mtl" />
+		<Unit filename="imagenes/cigarette.obj" />
+		<Unit filename="imagenes/water.mtl" />
+		<Unit filename="imagenes/water.obj" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

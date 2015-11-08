@@ -1,33 +1,79 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="imagenes\Estrella.mtl" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="15879" topLine="144" />
+			<Cursor1 position="348" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="glmimg.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7095" topLine="227" />
+		</Cursor>
+	</File>
+	<File name="imagenes\beer.obj" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="128" topLine="25" />
+		</Cursor>
+	</File>
+	<File name="glm.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9174" topLine="314" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="20304" topLine="180" />
 		</Cursor>
 		<Folding>
-			<Collapse line="50" />
-			<Collapse line="76" />
-			<Collapse line="104" />
-			<Collapse line="110" />
-			<Collapse line="138" />
-			<Collapse line="252" />
-			<Collapse line="323" />
-			<Collapse line="337" />
-			<Collapse line="351" />
-			<Collapse line="376" />
-			<Collapse line="416" />
-			<Collapse line="428" />
-			<Collapse line="498" />
-			<Collapse line="552" />
-			<Collapse line="567" />
-			<Collapse line="631" />
-			<Collapse line="684" />
-			<Collapse line="742" />
-			<Collapse line="803" />
-			<Collapse line="827" />
-			<Collapse line="858" />
-			<Collapse line="931" />
+			<Collapse line="56" />
+			<Collapse line="62" />
+			<Collapse line="77" />
+			<Collapse line="83" />
+			<Collapse line="86" />
+			<Collapse line="91" />
+			<Collapse line="94" />
+			<Collapse line="97" />
+			<Collapse line="108" />
+			<Collapse line="126" />
+			<Collapse line="140" />
+			<Collapse line="154" />
+			<Collapse line="163" />
+			<Collapse line="372" />
+			<Collapse line="455" />
+			<Collapse line="565" />
+			<Collapse line="625" />
+			<Collapse line="1012" />
 		</Folding>
+	</File>
+	<File name="glm.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9565" topLine="284" />
+		</Cursor>
+	</File>
+	<File name="imagenes\water.mtl" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="353" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="glm_util.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1416" topLine="48" />
+		</Cursor>
+	</File>
+	<File name="imagenes\apple.obj" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="129" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="imagenes\apple.mtl" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="550" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="imagenes\beer.mtl" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="180" topLine="0" />
+		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
