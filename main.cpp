@@ -45,6 +45,12 @@ int nivel = 1;
 int angulo=-1;
 //Contador de puntos actuales
 int puntuacionActual=0;
+//cantidad de objetos por segundo que aparecen
+int objXmin= 20;
+//lista de objetos
+int arrObj[100][4];
+int cantObj=0;
+int velocidadObj=10;
 //Mensaje por perdida
 string porquePerdio= "";
 //Mensaje informativos en caso de no ganar
@@ -152,6 +158,16 @@ static void letrero(string palabra){
        xRaster+=10;
     }
 }
+static void timerObj(int i){
+if(jugando==true && tiempo > 0 && vida > 0){
+    for(int x=0;x<=cantObj; x++){
+        arrObj[x][2]=arrObj[x][2]-velocidadObj;
+    }
+
+    glutTimerFunc(80,timerObj,1);
+    glutPostRedisplay();
+    }
+}
 static void timer(int i){
 
     if(navegacion!=4){
@@ -163,6 +179,15 @@ static void timer(int i){
 }
 static void timerCronometro(int i){
     if(jugando==true && tiempo > 0 && vida > 0){
+        if(tiempo%(60/objXmin)==0){
+            int type=rand() % 4;
+            int xpoint=rand() % (ancho) -(ancho/2);
+            int ypoint=rand() % (30) +(largo/2);
+            arrObj[cantObj][0]= type  ;
+            arrObj[cantObj][1]= xpoint  ;
+            arrObj[cantObj][2]= ypoint  ;
+            cantObj++;
+        }
         tiempo-=1;
         glutTimerFunc(1000,timerCronometro,1);
     }else{
@@ -778,15 +803,48 @@ static void juego(){
 
     if(perdio==false){
 
-    ///Objetos
-    glPushMatrix();
+        for(int num=0; num<cantObj ; num++){
 
-    glRotatef(90,1,1,0);
-    glTranslatef(0,0,-50);
-    glScalef(20,70,15);
-    //manzana();
-    cerveza();
-    glPopMatrix();
+            if(arrObj[num][3]==1)
+                continue;
+            else{
+                if(arrObj[num][1]<xNinja+200 && arrObj[num][1]>xNinja+130 && arrObj[num][2]<-60 && arrObj[num][2]>-200){
+                    puntuacionActual++;
+                    arrObj[num][3]=1;
+                }
+            }
+            ///Objetos
+            glPushMatrix();
+
+            //glRotatef(90,1,1,0);
+
+            cout<<num << ": " <<arrObj[num][1]<< "  "<<arrObj[num][2]<< endl;
+            glTranslatef(arrObj[num][1],arrObj[num][2],0);
+            int type = arrObj[num][0];
+            if(type==0){
+                glRotatef(-70,1,1,0);
+                glScalef(20,20,10);
+                manzana();
+            }else if(type==1){
+                cigarro();
+            }else if(type==2){
+                glRotatef(-80,1,1,0);
+                glScalef(40,55,20);
+                cerveza();
+            }else if(type==3){
+                glRotatef(95,1,1,0);
+                glScalef(20,20,15);
+                dona();
+            }else if(type==4){
+                glRotatef(95,1,1,0);
+                glScalef(30,30,20);
+                agua();
+            }
+            //manzana();
+            //cerveza();
+            glPopMatrix();
+        }
+        cout<< "-----------------------"<< endl;
     }else{
     ///Mensaje
 
@@ -947,6 +1005,7 @@ static void key(unsigned char k, int x, int y){
       navegacion=4;
       jugando=true;
       glutTimerFunc(1000,timerCronometro,1);
+      glutTimerFunc(1000,timerObj,1);
       }
     break;
   case 'n'://novato
@@ -955,6 +1014,7 @@ static void key(unsigned char k, int x, int y){
         navegacion=4;
         jugando=true;
         glutTimerFunc(1000,timerCronometro,1);
+      glutTimerFunc(1000,timerObj,1);
       }
     break;
   case 'm'://maestro
@@ -963,6 +1023,7 @@ static void key(unsigned char k, int x, int y){
             navegacion=4;
         jugando=true;
         glutTimerFunc(1000,timerCronometro,1);
+      glutTimerFunc(1000,timerObj,1);
       }
     break;
   case 'R':
