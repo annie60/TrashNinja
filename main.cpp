@@ -809,7 +809,11 @@ static void juego(){
                 continue;
             else{
                 if(arrObj[num][1]<xNinja+200 && arrObj[num][1]>xNinja+130 && arrObj[num][2]<-60 && arrObj[num][2]>-200){
-                    puntuacionActual++;
+                    int type = arrObj[num][0];
+                    if (type==0 || type==3)
+                        vida--;
+                    else
+                        puntuacionActual++;
                     arrObj[num][3]=1;
                 }
             }
