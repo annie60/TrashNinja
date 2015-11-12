@@ -32,34 +32,40 @@ string fullPath = __FILE__;
 //Vida inicial del jugador
 int vida=3;
 //50 segundos en el cronometro
-int tiempo=50;
+int tiempo=60;
 //Saber en que punto del menu esta
 // 1 -home, 2- seleccion de nivel, 3- opciones, 4- en juego
 int navegacion=1;
-int velocidad=4; //variable para calcular que tan rapido se mueve
+int velocidad=8; //variable para calcular que tan rapido se mueve
 //Indica si esta en juego o no (Pausa y continuar)
 bool jugando=false;
 //Niveles abiertos por el jugador
 int nivel = 1;
+int nivelActual=1;
 //Variable para animacion de letreros
 int angulo=-1;
+int anguloObj=5;
+int anguloObj1=5;
+int anguloObj2=5;
+int anguloObj3=5;
+int anguloObj4=5;
 //Contador de puntos actuales
 int puntuacionActual=0;
 //cantidad de objetos por segundo que aparecen
 int objXmin= 20;
 //lista de objetos
 int arrObj[100][4];
+
 int cantObj=0;
-int velocidadObj=10;
+int velocidadObj=5;
 //Mensaje por perdida
 string porquePerdio= "";
 //Mensaje informativos en caso de no ganar
-string mensajes []={"Las manzanas le ayudan a tu cuerpo","El cigarro puede causar problemas al respirar"
-"El alcohol lastima a tu estomago","Tu cuerpo necesita agua funcionar"};
+string mensajes []={"Las manzanas le ayudan a tu cuerpo","El cigarro causa problemas al respirar",
+"Tu cuerpo necesita agua"};
 //Puntuacion para cada nivel
 int puntosMeta [] ={100,250,500};
-//Valores de los objetos a recoger
-int valoraciones[]={5,10,15,25};
+
 void getParentPath(){
     for (int i = fullPath.length()-1; i>=0 && fullPath[i] != '\\'; i--) {
         fullPath.erase(i,1);
@@ -79,13 +85,12 @@ static void resize(int width, int height)
     glLoadIdentity() ;
     gluLookAt(0, 0, 15, 0, 0, 0, 0, 1,0);
 }
-//TODO: Metodos para dibujar objetos con
+//Metodos para dibujar objetos con
 // volumen para que parezca 3era dimension
 static void manzana(){
-    glPushMatrix();
-    glTranslatef(0,0,5);
+
     glmDraw(&model[5],GLM_COLOR|GLM_FLAT);
-    glPopMatrix();
+
 }
 static void cigarro(){
     glmDraw(&model[3],GLM_COLOR|GLM_FLAT);
@@ -155,7 +160,7 @@ static void letrero(string palabra){
        char valor=palabra.at(j);
        glRasterPos2i(xRaster,yRaster);
        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,valor);
-       xRaster+=10;
+       xRaster+=13;
     }
 }
 static void timerObj(int i){
@@ -163,42 +168,49 @@ if(jugando==true && tiempo > 0 && vida > 0){
     for(int x=0;x<=cantObj; x++){
         arrObj[x][2]=arrObj[x][2]-velocidadObj;
     }
-
+    anguloObj=anguloObj1=anguloObj2=anguloObj3=anguloObj4+=10;
     glutTimerFunc(80,timerObj,1);
     glutPostRedisplay();
     }
 }
 static void timer(int i){
 
-    if(navegacion!=4){
+    //if(navegacion!=4){
     angulo +=10;
     glutTimerFunc(80,timer,1);
-    }
+    //}
     glutPostRedisplay();
 
 }
 static void timerCronometro(int i){
     if(jugando==true && tiempo > 0 && vida > 0){
         if(tiempo%(60/objXmin)==0){
-            int type=rand() % 4;
-            int xpoint=rand() % (ancho) -(ancho/2);
+            int type=rand() % 5;
+            int xpoint=rand() % (ancho-20) - ((ancho/2)-15);
             int ypoint=rand() % (30) +(largo/2);
             arrObj[cantObj][0]= type  ;
             arrObj[cantObj][1]= xpoint  ;
             arrObj[cantObj][2]= ypoint  ;
+            arrObj[cantObj][3]= 0 ;
             cantObj++;
         }
         tiempo-=1;
+
         glutTimerFunc(1000,timerCronometro,1);
-    }else{
+    }else if(jugando==true && (tiempo ==0 || vida ==0)){
         jugando=false;
         //Revisa si se alcanzo la meta del nivel
-        if(puntuacionActual < puntosMeta[nivel]){
+        if(puntuacionActual < puntosMeta[nivelActual-1] && vida > 0){
         porquePerdio="No dominaste el nivel";
         perdio=true;
         }else if(vida==0){
         porquePerdio="Se acabaron las vidas";
         perdio=true;
+        }else if(puntuacionActual >= puntosMeta[nivelActual-1]){
+            perdio=false;
+            if(nivel<3){
+            nivel++;
+            }
         }
     }
     glutPostRedisplay();
@@ -526,7 +538,7 @@ static void pantallaInicial(){
     glPushMatrix();
     glRotatef(0.5,0,0,1);
     glTranslatef((-(ancho/4))+ancho/6,(largo/3),2.5);
-    glScalef(2.5,10,1);
+    glScalef(1,10,1);
     glColor3f(0, 0,0);
     letrero("J-Jugar");
     glPopMatrix();
@@ -619,10 +631,12 @@ static void pantallaInformacion(){
     glPopMatrix();
 
     letreroChico("Usa las flechas del teclado");
-    glTranslatef(0,-50,0);
+    glTranslatef(0,-25,0);
     letreroChico("para mover al ninja");
-    glTranslatef(0,-50,0);
-    letreroChico("y atrapar lo que no sirve.");
+    glTranslatef(0,-25,0);
+    letreroChico("y atrapar lo que no");
+    glTranslatef(0,-25,0);
+    letreroChico("es bueno para tu cuerpo.");
     glTranslatef(0,-100,0);
     letreroChico("Hecho por:");
     glTranslatef(0,-20,0);
@@ -646,6 +660,27 @@ static void pantallaInformacion(){
     glScalef(6,5,2);
     dibujaBasurero();
     glPopMatrix();
+    ///Cigarro
+    glPushMatrix();
+    glTranslatef(-(ancho/3.5),-60,-11);
+    glRotatef(30,1,1,0);
+    glScalef(50,30,20);
+    cigarro();
+    glPopMatrix();
+    ///Cerveza
+    glPushMatrix();
+    glTranslatef(-(ancho/4.5),-60,-11);
+    glRotatef(80,1,1,0);
+    glScalef(40,45,20);
+    cerveza();
+    glPopMatrix();
+    ///Dona
+    glPushMatrix();
+    glTranslatef(-(ancho/7.5),-60,-11);
+    glRotatef(80,1,1,0);
+    glScalef(20,20,15);
+    dona();
+    glPopMatrix();
 
 }
 static void pantallaSeleccion(){
@@ -666,6 +701,13 @@ static void pantallaSeleccion(){
     glScalef(1,1,2);
     dibujaBotonHome(1);
     glPopMatrix();
+    ///Instrucciones
+    glPushMatrix();
+    glTranslatef((-(ancho/2))+150,largo/4,1);
+    glScalef(1,1,2);
+    glColor3f(0,0,0);
+    letrero("Escoge el nivel");
+    glPopMatrix();
 
     ///Niveles
     ///nivel 1
@@ -678,7 +720,7 @@ static void pantallaSeleccion(){
     glPopMatrix();
     glPushMatrix();
     glTranslatef(-((ancho/3.5)-15),-50,-40);
-    glRotatef(angulo,0,1,0);
+    //glRotatef(angulo,0,1,0);
     glScalef(0.5,0.5,1);
     glTranslatef(-55,0,0);
     letreroChico("A-Aprendiz");
@@ -695,7 +737,7 @@ static void pantallaSeleccion(){
     glPopMatrix();
     glPushMatrix();
     glTranslatef(-15,-50,-40);
-    glRotatef(angulo,0,1,0);
+    //glRotatef(angulo,0,1,0);
     glScalef(0.5,0.5,0);
     glTranslatef(-15,0,0);
     letreroChico("N-Novato");
@@ -718,7 +760,7 @@ static void pantallaSeleccion(){
     glPopMatrix();
     glPushMatrix();
     glTranslatef((ancho/4),-50,-40);
-    glRotatef(angulo,0,1,0);
+    //glRotatef(angulo,0,1,0);
     glScalef(0.5,0.5,0);
     glTranslatef(-55,0,0);
     letreroChico("M-Maestro");
@@ -765,14 +807,18 @@ static void juego(){
 
     ///Cronometro
     glPushMatrix();
-    glTranslatef((ancho/3)-30,(largo/2.4),1);
+    glTranslatef((ancho/3)-40,(largo/2.4),1);
     string cronometro=formato(tiempo);
     letrero(cronometro);
     glPopMatrix();
-    //TODO: Agregar letreros con los shortcuts de Pausa, reiniciar y continuar
-    //TODO: Agregar el despliegue de las estrellas
-    //TODO: Implementar despliegue de mensajes en caso de perdida
+    ///TODO: Agregar letreros con los shortcuts de Pausa, reiniciar y continuar
+
     ///Puntaje
+    glPushMatrix();
+    glTranslatef(-((ancho/2)-20),(largo/2.55),0);
+    glScalef(1,1,2);
+    letreroChico("Puntos:"+static_cast<ostringstream*>( &(ostringstream() << puntuacionActual) )->str());
+    glPopMatrix();
 
     ///Vidas
     glPushMatrix();
@@ -780,6 +826,7 @@ static void juego(){
     glScalef(15,15,2);
     estrellas(vida);
     glPopMatrix();
+
     ///Ninja
     glPushMatrix();
     glTranslatef(xNinja,0,0);
@@ -801,7 +848,7 @@ static void juego(){
 
     glPopMatrix();
 
-    if(perdio==false){
+    if(perdio==false && jugando==true ){
 
         for(int num=0; num<cantObj ; num++){
 
@@ -810,47 +857,97 @@ static void juego(){
             else{
                 if(arrObj[num][1]<xNinja+200 && arrObj[num][1]>xNinja+130 && arrObj[num][2]<-60 && arrObj[num][2]>-200){
                     int type = arrObj[num][0];
-                    if (type==0 || type==3)
-                        vida--;
-                    else
-                        puntuacionActual++;
+                    if (type==0 || type==4){
+                        if(vida == 0){
+                            perdio=true;
+                            jugando=false;
+
+                        }else{
+                            vida--;
+                        }
+                    }else{
+                        puntuacionActual+=10;
+
+                    }
                     arrObj[num][3]=1;
                 }
             }
             ///Objetos
             glPushMatrix();
 
-            //glRotatef(90,1,1,0);
 
-            cout<<num << ": " <<arrObj[num][1]<< "  "<<arrObj[num][2]<< endl;
-            glTranslatef(arrObj[num][1],arrObj[num][2],0);
+
+           // cout<<num << ": " <<arrObj[num][1]<< "  "<<arrObj[num][2]<< endl;
+            glTranslatef(arrObj[num][1],arrObj[num][2],-45);
             int type = arrObj[num][0];
             if(type==0){
-                glRotatef(-70,1,1,0);
-                glScalef(20,20,10);
+                glPushMatrix();
+                glRotatef(anguloObj,1,1,1);
+                glScalef(20,20,20);
                 manzana();
-            }else if(type==1){
+
+                glPopMatrix();
                 cigarro();
+
+            }else if(type==1){
+                glRotatef(anguloObj1,1,1,1);
+                glScalef(50,30,20);
+                cigarro();
+
             }else if(type==2){
-                glRotatef(-80,1,1,0);
+                glRotatef(anguloObj2,1,1,0);
                 glScalef(40,55,20);
                 cerveza();
+
             }else if(type==3){
-                glRotatef(95,1,1,0);
+                glRotatef(anguloObj3,1,1,0);
                 glScalef(20,20,15);
                 dona();
+
             }else if(type==4){
-                glRotatef(95,1,1,0);
-                glScalef(30,30,20);
+                glRotatef(anguloObj4,1,1,0);
+                glScalef(30,30,30);
                 agua();
+
             }
-            //manzana();
-            //cerveza();
+
             glPopMatrix();
+
         }
-        cout<< "-----------------------"<< endl;
-    }else{
-    ///Mensaje
+        //cout<< "-----------------------"<< endl;
+    }else if(jugando==false && perdio==false && tiempo==0){
+    ///Mensaje gano
+    glPushMatrix();
+    glTranslatef(-(ancho/4),50,1);
+
+    glPushMatrix();
+    glTranslatef(-(ancho/11),-(largo/4),-45);
+    glScalef(ancho/1.3,largo/3,2);
+    glRotatef(5,0,1,1);
+    dibujaFondoMensajes(1);
+    glPopMatrix();
+
+    glTranslatef(-50,-30,0);
+    glColor3f(1,1,1);
+    letrero("¡Felicidades completaste");
+    glTranslatef(5,-20,0);
+    letrero("el nivel!");
+    glTranslatef(10,-50,0);
+    letreroChico(mensajes[nivelActual-1]);
+    glTranslatef(45,-50,0);
+
+    glPushMatrix();
+    glTranslatef(-10,-5,-5);
+    glScalef(265,255,2);
+    dibujaBotonMadera(1);
+    glPopMatrix();
+
+    glColor3f(1,1,1);
+    letrero("S-Siguiente");
+
+    glPopMatrix();
+    }else if(perdio==true){
+    ///Mensaje perdio
 
     glPushMatrix();
     glTranslatef(-(ancho/4),50,1);
@@ -865,15 +962,15 @@ static void juego(){
     glColor3f(1,1,1);
     letrero(porquePerdio);
 
-    glTranslatef(0,-50,0);
-    letrero("¡Lo siento! Vuelve a intentar");
     glTranslatef(-25,-50,0);
-    letreroChico(mensajes[nivel-1]);
+    letrero("¡Lo siento! Vuelve a intentar");
+    glTranslatef(0,-50,0);
+    letreroChico(mensajes[nivelActual-1]);
     glTranslatef(45,-50,0);
     glPushMatrix();
 
-    glTranslatef(-10,0,-15);
-    glScalef(230,235,2);
+    glTranslatef(-10,-5,-5);
+    glScalef(265,255,2);
     dibujaBotonMadera(1);
     glPopMatrix();
     glColor3f(1,1,1);
@@ -883,10 +980,12 @@ static void juego(){
 
 }
 static void reiniciar(){
-tiempo=50;
-vida=3;
+    tiempo=60;
+    vida=3;
  puntuacionActual=0;
- jugando=false;
+ jugando=true;
+ perdio=false;
+ cantObj=0;
  glutPostRedisplay();
 }
 static void display(void)
@@ -980,20 +1079,26 @@ static void key(unsigned char k, int x, int y){
     }
 
     break;
-  case 'c'://Continuar
+  case 'c':///Continuar
   case 'C':
     if(navegacion==4){
     jugando=true;
-    glutPostRedisplay();
+    glutTimerFunc(1000,timerCronometro,1);
+     glutTimerFunc(500,timerObj,1);
     }
+    //glutPostRedisplay();
     break;
   case 'h':
   case 'H':
-    if(jugando==true){
+    //if(jugando==true){
+    tiempo=60;
+    vida=3;
+    puntuacionActual=0;
+    perdio=false;
+    cantObj=0;
     jugando=false;
-    glutTimerFunc(100,timer,1);
-    reiniciar();
-    }
+    //}
+    //glutTimerFunc(100,timer,1);
     navegacion=1;
     break;
   case 'i':
@@ -1003,40 +1108,58 @@ static void key(unsigned char k, int x, int y){
     navegacion=3;
     }
     break;
-  case 'a': //aprendiz
+  case 'a': ///aprendiz
   case 'A':
       if(navegacion ==2){
+        nivelActual=1;
       navegacion=4;
+      velocidadObj=5;
+      objXmin=20;
       jugando=true;
       glutTimerFunc(1000,timerCronometro,1);
-      glutTimerFunc(1000,timerObj,1);
+      glutTimerFunc(500,timerObj,1);
       }
     break;
-  case 'n'://novato
+  case 'n':///novato
   case 'N':
       if(nivel > 1 && navegacion==2){
+        nivelActual=2;
         navegacion=4;
+        velocidadObj=10;
+        objXmin=35;
         jugando=true;
         glutTimerFunc(1000,timerCronometro,1);
-      glutTimerFunc(1000,timerObj,1);
+      glutTimerFunc(500,timerObj,1);
       }
     break;
-  case 'm'://maestro
+  case 'm':///maestro
   case 'M':
       if(nivel > 2 && navegacion==2){
-            navegacion=4;
+        nivelActual=3;
+        navegacion=4;
         jugando=true;
+        velocidadObj=15;
+        objXmin=35;
         glutTimerFunc(1000,timerCronometro,1);
-      glutTimerFunc(1000,timerObj,1);
+      glutTimerFunc(500,timerObj,1);
       }
     break;
   case 'R':
   case 'r':
     if(navegacion == 4 && perdio==true){
     reiniciar();
+    glutTimerFunc(1000,timerCronometro,1);
+    glutTimerFunc(500,timerObj,1);
     }
     break;
-
+  case 'S':
+  case 's':
+    if(navegacion == 4 && jugando==false && perdio==false){
+        reiniciar();
+        navegacion=2;
+    }
+    glutPostRedisplay();
+    break;
   default:
     return;
   }
