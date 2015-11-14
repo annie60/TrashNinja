@@ -14,7 +14,7 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
-1447268395 source:c:\users\ana\documents\github\trashninja\main.cpp
+1447435415 source:c:\users\ana\documents\github\trashninja\main.cpp
 	<windows.h>
 	<GLUT/glut.h>
 	<GL/glut.h>
@@ -26,8 +26,9 @@
 	<iostream>
 	<math.h>
 	"glm.h"
+	"imageloader.h"
 
-1446664061 c:\users\ana\documents\github\trashninja\imageloader.h
+1447435680 c:\users\ana\documents\github\trashninja\imageloader.h
 
 1446700211 c:\users\ana\documents\github\trashninja\glm.h
 	<OpenGL/gl.h>
