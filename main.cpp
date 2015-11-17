@@ -858,6 +858,11 @@ static void juego(){
     glPopMatrix();
     ///TODO: Agregar letreros con los shortcuts de Pausa, reiniciar y continuar
 
+    glPushMatrix();
+    glTranslatef(-((ancho/2)-20),-(largo/2)+5,0);
+    glScalef(1,1,2);
+    letreroChico("Pausar- p     Continuar -c");
+    glPopMatrix();
     ///Puntaje
     glPushMatrix();
     glTranslatef(-((ancho/2)-20),(largo/2.55),0);
@@ -1021,6 +1026,36 @@ static void juego(){
     glColor3f(1,1,1);
     letrero("R-Reiniciar");
     glPopMatrix();
+    }else if(!jugando){
+        ///Mensaje de en pausa
+
+    glPushMatrix();
+    glTranslatef(-(ancho/4),50,1);
+
+    glPushMatrix();
+    glTranslatef(-(ancho/11),-(largo/4),-45);
+    glScalef(ancho/1.3,largo/3,2);
+    glRotatef(5,0,1,1);
+    dibujaFondoMensajes(1);
+    glPopMatrix();
+    glTranslatef(-20,0,0);
+    glColor3f(1,1,1);
+    letrero(porquePerdio);
+
+    glTranslatef(-25,-50,0);
+    letrero("Juego en pausa");
+    glTranslatef(0,-50,0);
+    letreroChico(mensajes[nivelActual-1]);
+    glTranslatef(45,-50,0);
+    glPushMatrix();
+
+    glTranslatef(-10,-5,-5);
+    glScalef(265,255,2);
+    dibujaBotonMadera(1);
+    glPopMatrix();
+    glColor3f(1,1,1);
+    letrero("C-Continuar");
+    glPopMatrix();
     }
 
 }
@@ -1137,7 +1172,7 @@ static void key(unsigned char k, int x, int y){
     break;
   case 'c':///Continuar
   case 'C':
-    if(navegacion==4){
+    if(navegacion==4 && !jugando){
     jugando=true;
     glutTimerFunc(1000,timerCronometro,1);
      glutTimerFunc(500,timerObj,1);
